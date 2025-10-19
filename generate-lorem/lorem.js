@@ -1,18 +1,18 @@
 // generate-lorem/lorem.js
 // Minimal, dependency-free Lorem Ipsum generator.
-// Supports words, sentences, paragraphs, and deterministic seeding.
+// Works in browsers and GitHub Pages. Supports words, sentences, paragraphs, and deterministic seeding.
 
 export function generateLorem(options = {}) {
   const {
-    units = 'sentences',          // 'words' | 'sentences' | 'paragraphs'
-    count = 3,                    // how many units to return
-    seed = null,                  // string for deterministic output
-    dictionary = DEFAULT_DICT,    // array of words to sample from
-    wordsPerSentence = [8, 16],   // [min, max]
+    units = 'sentences',            // 'words' | 'sentences' | 'paragraphs'
+    count = 3,                      // how many units to return
+    seed = null,                    // deterministic seed string
+    dictionary = DEFAULT_DICT,      // array of words to sample from
+    wordsPerSentence = [8, 16],     // [min, max]
     sentencesPerParagraph = [3, 6], // [min, max]
-    capitalize = true,            // capitalize first letter of sentences
-    endWithPeriod = true,         // end sentences with '.'
-    separator = ' '               // joiner for top-level units
+    capitalize = true,              // capitalize first letter of sentences
+    endWithPeriod = true,           // end sentences with '.'
+    separator = ' '                 // join paragraphs or sentences
   } = options;
 
   if (!Array.isArray(dictionary) || dictionary.length === 0) {
@@ -69,9 +69,8 @@ function randRange(min, max, rng) {
   return min + (rng() % span);
 }
 
-// Crypto RNG returns uniform 32-bit integers (no await)
+// Crypto RNG returns uniform 32-bit integers
 function cryptoRNG() {
-  // Browser or Node >= 19 (webcrypto)
   if (globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
     return () => {
       const u32 = new Uint32Array(1);
@@ -79,14 +78,7 @@ function cryptoRNG() {
       return u32[0] >>> 0;
     };
   }
-  // Node fallback if randomBytes exists on global crypto (older Node)
-  if (globalThis.crypto && typeof globalThis.crypto.randomBytes === 'function') {
-    return () => {
-      const b = globalThis.crypto.randomBytes(4);
-      return (b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24)) >>> 0;
-    };
-  }
-  // Last resort: small xorshift-like PRNG (not crypto-safe)
+  // fallback: pseudo-random (not crypto-safe)
   let x = 0x9e3779b9 ^ Date.now();
   return () => {
     x = (x + 0x6d2b79f5) | 0;
@@ -97,7 +89,7 @@ function cryptoRNG() {
   };
 }
 
-// Deterministic integer RNG from string seed (xorshift-like mix)
+// Deterministic integer RNG from string seed (xorshift-like)
 function seededRNG(seed) {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < seed.length; i++) {
@@ -112,6 +104,7 @@ function seededRNG(seed) {
   };
 }
 
+// Default word dictionary
 const DEFAULT_DICT = Object.freeze([
   'lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit',
   'sed','do','eiusmod','tempor','incididunt','ut','labore','et','dolore',
@@ -122,3 +115,8 @@ const DEFAULT_DICT = Object.freeze([
   'pariatur','excepteur','sint','occaecat','cupidatat','non','proident',
   'sunt','in','culpa','qui','officia','deserunt','mollit','anim','id','est','laborum'
 ]);
+
+// Example usage:
+// console.log(generateLorem({ units: 'words', count: 10 }));
+// console.log(generateLorem({ units: 'sentences', count: 2, seed: 'demo' }));
+// console.log(generateLorem({ units: 'paragraphs', count: 2, separator: '\n\n' }));
