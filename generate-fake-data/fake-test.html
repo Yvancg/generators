@@ -1,10 +1,10 @@
-<!-- generate-fake-data/fake-test.html -->
+<!-- generate-fake-data/fake-toggles-test.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fake Data Generator Test</title>
+  <title>Fake Data Generator (Toggles)</title>
   <style>
     body {
       font-family: ui-monospace, monospace;
@@ -23,17 +23,18 @@
       cursor: pointer;
       font-family: inherit;
     }
-    select {
-      padding: 6px;
-      font-family: inherit;
-      margin-top: 6px;
-    }
     .row {
       display: flex;
       gap: 10px;
       align-items: center;
       margin-top: 20px;
       flex-wrap: wrap;
+    }
+    .toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
     }
     pre {
       background: #eee;
@@ -47,20 +48,18 @@
   </style>
 </head>
 <body>
-  <h1>🧪 Fake Data Generator Advanced Test</h1>
+  <h1>🧪 Fake Data Generator (Toggles)</h1>
 
   <label>Seed (optional): <input type="text" id="seed" placeholder="e.g. 1234"></label>
   <label>Count: <input type="number" id="count" value="5" min="1" max="1000"></label>
-  <label>Data type:
-    <select id="type">
-      <option value="users">Users</option>
-      <option value="names">Names only</option>
-      <option value="emails">Emails only</option>
-      <option value="addresses">Addresses only</option>
-      <option value="companies">Companies only</option>
-      <option value="phones">Phones only</option>
-    </select>
-  </label>
+
+  <div class="toggles">
+    <label><input type="checkbox" id="field-name" checked> name</label>
+    <label><input type="checkbox" id="field-email" checked> email</label>
+    <label><input type="checkbox" id="field-phone" checked> phone</label>
+    <label><input type="checkbox" id="field-address" checked> address</label>
+    <label><input type="checkbox" id="field-company" checked> company</label>
+  </div>
 
   <div class="row">
     <button id="generate">Generate</button>
@@ -86,38 +85,32 @@
     $('generate').onclick = () => {
       const seed = $('seed').value || undefined;
       const n = Math.max(1, Math.min(1000, parseInt($('count').value || '5', 10)));
-      const type = $('type').value;
       const R = rng(seed);
-      let data = [];
+
+      // Get toggles
+      const active = {
+        name: $('field-name').checked,
+        email: $('field-email').checked,
+        phone: $('field-phone').checked,
+        address: $('field-address').checked,
+        company: $('field-company').checked,
+      };
 
       try {
-        switch (type) {
-          case 'users':
-            data = rows(n, seed);
-            break;
-          case 'names':
-            data = Array.from({ length: n }, () => F.fullName(R));
-            break;
-          case 'emails':
-            data = Array.from({ length: n }, () => F.email(F.fullName(R), R));
-            break;
-          case 'addresses':
-            data = Array.from({ length: n }, () => F.address(R));
-            break;
-          case 'companies':
-            data = Array.from({ length: n }, () => F.company(R));
-            break;
-          case 'phones':
-            data = Array.from({ length: n }, () => F.phoneE164(R));
-            break;
+        const data = [];
+        for (let i = 0; i < n; i++) {
+          const base = user(R);
+          const outObj = {};
+          if (active.name) outObj.name = base.name;
+          if (active.email) outObj.email = base.email;
+          if (active.phone) outObj.phone = base.phone;
+          if (active.address) outObj.address = base.address;
+          if (active.company) outObj.company = base.company;
+          data.push(outObj);
         }
 
         out.textContent = JSON.stringify(data, null, 2);
-        one.textContent = JSON.stringify(
-          Array.isArray(data) && data.length ? data[0] : data,
-          null,
-          2
-        );
+        one.textContent = JSON.stringify(data[0], null, 2);
         copyBtn.disabled = false;
         dlBtn.disabled = false;
       } catch (err) {
