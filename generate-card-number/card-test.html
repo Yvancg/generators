@@ -1,0 +1,91 @@
+<!-- generate-card-number/card-test.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Card Number Generator Test</title>
+  <style>
+    body{font-family:ui-monospace,monospace;background:#fafafa;color:#222;max-width:720px;margin:40px auto;padding:20px}
+    h1{font-size:1.4rem;margin-bottom:1rem}
+    label{display:block;margin-top:10px}
+    input,select{padding:6px}
+    .row{display:flex;gap:10px;align-items:center;margin-top:16px}
+    button{padding:8px 14px;cursor:pointer}
+    pre{background:#eee;padding:12px;border-radius:6px;word-break:break-all;margin-top:16px;min-height:56px}
+    .hint{color:#666;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <h1>💳 Card Number Generator Test</h1>
+
+  <label>
+    Brand
+    <select id="brand">
+      <option value="visa">visa</option>
+      <option value="mastercard">mastercard</option>
+      <option value="amex">amex</option>
+      <option value="discover">discover</option>
+      <option value="" selected>custom prefix</option>
+    </select>
+  </label>
+
+  <label>
+    Prefix (optional)
+    <input id="prefix" placeholder="e.g. 400000 or leave empty"/>
+    <div class="hint">If blank, brand prefixes are used. If brand empty, a random BIN-like prefix is used.</div>
+  </label>
+
+  <label>
+    Length (optional)
+    <input id="length" type="number" min="12" max="19" placeholder="auto"/>
+    <div class="hint">Defaults to brand standard or 16.</div>
+  </label>
+
+  <label>
+    Seed (optional)
+    <input id="seed" placeholder="deterministic seed"/>
+  </label>
+
+  <div class="row">
+    <button id="generate">Generate</button>
+    <button id="copy" disabled>Copy</button>
+  </div>
+
+  <pre id="output">Click "Generate"</pre>
+
+  <script type="module">
+    import { generateCardNumber } from './card.js';
+    const $ = id => document.getElementById(id);
+    const out = $('output');
+    const copyBtn = $('copy');
+
+    $('generate').onclick = () => {
+      const brand = $('brand').value || null;
+      const prefix = $('prefix').value.trim() || null;
+      const length = $('length').value ? parseInt($('length').value,10) : undefined;
+      const seed = $('seed').value || null;
+      try {
+        const num = generateCardNumber({ brand, prefix, length, seed });
+        out.textContent = num;
+        copyBtn.disabled = false;
+      } catch (e) {
+        console.error(e);
+        out.textContent = 'Error: ' + (e?.message || e);
+        copyBtn.disabled = true;
+      }
+    };
+
+    copyBtn.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(out.textContent);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(()=> (copyBtn.textContent='Copy'),1500);
+      } catch (e) {
+        console.error(e);
+        copyBtn.textContent = 'Error';
+      }
+    };
+  </script>
+</body>
+</html>
