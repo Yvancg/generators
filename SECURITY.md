@@ -47,6 +47,7 @@ This policy applies to all modules in the **Validators** repository:
 - `generate-fake-data`
 - `generate-lorem`
 - `generate-password`
+- `generate-token`
 -  etc
 
 ---
