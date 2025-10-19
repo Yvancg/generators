@@ -5,6 +5,7 @@ import { performance }              from 'node:perf_hooks';
 import { rows }              from '../generate-fake-data/fake.js';
 import { generateLorem }     from '../generate-lorem/lorem.js';
 import { generatePassword }  from '../generate-password/password.js';
+import { generateToken } from '../generate-token/token.js';
 
 // ensure output dir
 mkdirSync('bench', { recursive: true });
@@ -27,6 +28,7 @@ const targets = [
   { name: 'fake-data', fn: () => rows(50, 1234), iters: iters.fake },
   { name: 'lorem',     fn: () => generateLorem({ units: 'sentences', count: 3 }), iters: iters.lorem },
   { name: 'password',  fn: () => generatePassword({ length: 16, symbols: true, numbers: true, uppercase: true, lowercase: true }), iters: iters.passwd },
+  { name: 'token',     fn: () => generateToken({ type: 'hex', length: 32 }), iters: 100_000 },
 ];
 
 let wrote = 0;
