@@ -79,52 +79,51 @@
 
   <pre id="output">Click "Generate"</pre>
 
+  <!-- generate-lorem/lorem-test.html -->
   <script type="module">
-    import { generateLorem } from './lorem.js';
+    import { generateLorem } from './lorem.js?v=3'; // cache-bust on every edit
+  
     const $ = id => document.getElementById(id);
     const out = $('output');
     const copyBtn = $('copy');
-
+  
     function parsePair(txt, fallback) {
       const m = String(txt).split(',').map(s => parseInt(s.trim(), 10));
-      if (m.length === 2 && Number.isFinite(m[0]) && Number.isFinite(m[1]) && m[0] > 0 && m[1] >= m[0]) {
-        return [m[0], m[1]];
-      }
-      return fallback;
+      return (m.length === 2 && Number.isFinite(m[0]) && Number.isFinite(m[1]) && m[0] > 0 && m[1] >= m[0]) ? [m[0], m[1]] : fallback;
     }
-
+  
     $('generate').onclick = () => {
-      const units = $('units').value;
-      const count = parseInt($('count').value, 10);
-      const wps = parsePair($('wps').value, [8,16]);
-      const spp = parsePair($('spp').value, [3,6]);
-      const sep = $('sep').value === '\\n\\n' ? '\n\n' : ' ';
-      const opts = {
-        units,
-        count,
-        seed: $('seed').value || null,
-        wordsPerSentence: wps,
-        sentencesPerParagraph: spp,
-        capitalize: $('caps').checked,
-        endWithPeriod: $('period').checked,
-        separator: sep
-      };
       try {
-        const txt = generateLorem(opts);
+        const units = $('units').value;
+        const count = parseInt($('count').value, 10);
+        const wps = parsePair($('wps').value, [8,16]);
+        const spp = parsePair($('spp').value, [3,6]);
+        const sep = $('sep').value === 'blank' ? '\n\n' : ' ';
+        const txt = generateLorem({
+          units, count,
+          seed: $('seed').value || null,
+          wordsPerSentence: wps,
+          sentencesPerParagraph: spp,
+          capitalize: $('caps').checked,
+          endWithPeriod: $('period').checked,
+          separator: sep
+        });
         out.textContent = txt;
         copyBtn.disabled = false;
       } catch (e) {
-        out.textContent = 'Error: ' + e.message;
+        console.error(e);
+        out.textContent = 'Error: ' + (e?.message || e);
         copyBtn.disabled = true;
       }
     };
-
+  
     copyBtn.onclick = async () => {
       try {
         await navigator.clipboard.writeText(out.textContent);
         copyBtn.textContent = 'Copied!';
         setTimeout(() => (copyBtn.textContent = 'Copy'), 1500);
-      } catch {
+      } catch (e) {
+        console.error(e);
         copyBtn.textContent = 'Error';
       }
     };
