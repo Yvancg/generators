@@ -8,6 +8,10 @@ A collection of minimal, dependency-free generators for developers, testers, and
 
 Available modules:
 
+- **generate-card-number** — Valid Luhn-compliant card number generator with realistic expiry and CVC for testing.  
+  [![card gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/card.js.json)](./metrics/card.js.json)
+  [![card ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/card.json)](./bench/card.json)
+
 - **generate-fake-data** — Seedable, dependency-free fake data generator.  
   [![fake gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/fake.js.json)](../metrics/fake.js.json)
   [![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake-data.json)](../bench/fake-data.json)
@@ -35,6 +39,7 @@ Each module has its own `README.md`, tests, and can be imported individually.
 
 You can try each generator interactively in your browser:
 
+- [Generate Card Number Test](https://yvancg.github.io/generators/generate-card-number/card-test.html)
 - [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
 - [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
 - [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
@@ -62,10 +67,14 @@ Each page loads its respective module and allows interactive validation.
 ## Example Usage
 
 ```js
+import { generateCard } from './card.js';
 import { rows, user } from './generate-fake-data/fake.js';
 import { generateLorem } from './generate-lorem/lorem.js';
 import { generatePassword } from './generate-password/password.js';
 import { generateToken } from './generate-token/token.js';
+
+console.log(generateCard({ brand: 'visa' }));
+// → { number: '4111111111111111', brand: 'visa', expiry: '08/28', cvc: '123' }
 
 console.log(rows(3, 42));
 // → array of 3 fake user objects (deterministic)
@@ -93,6 +102,7 @@ generators/
   ├─ README.md
   ├─ SECURITY.md
   ├─ generate-fake-data/
+  ├─ generate-card-number/
   ├─ generate-lorem/
   ├─ generate-password/
   └─ generate-token/
