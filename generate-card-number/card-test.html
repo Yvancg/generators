@@ -66,19 +66,22 @@
       const length = $('length').value ? parseInt($('length').value,10) : undefined;
       const seed = $('seed').value || null;
       try {
-        const num = generateCardNumber({ brand, prefix, length, seed });
-        out.textContent = num;
+        const card = generateCard({ brand, prefix, length, seed, maxExpiryYears: 5 });
+        out.textContent = `${card.number}\nEXP: ${card.expiry}\nCVC: ${card.cvc}`;
         copyBtn.disabled = false;
+        copyBtn.dataset.payload = `${card.number}|${card.expiry}|${card.cvc}`;
       } catch (e) {
         console.error(e);
         out.textContent = 'Error: ' + (e?.message || e);
         copyBtn.disabled = true;
+        copyBtn.dataset.payload = '';
       }
     };
 
     copyBtn.onclick = async () => {
       try {
-        await navigator.clipboard.writeText(out.textContent);
+        const payload = copyBtn.dataset.payload || out.textContent;
+        await navigator.clipboard.writeText(payload);
         copyBtn.textContent = 'Copied!';
         setTimeout(()=> (copyBtn.textContent='Copy'),1500);
       } catch (e) {
