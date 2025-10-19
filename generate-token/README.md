@@ -9,34 +9,45 @@
 
 ## 🚀 Why
 
-Most fake data libraries rely on massive datasets or unsafe randomness.
-`generate-token` is small, deterministic, and dependency-free — ideal for reproducible test runs, mock APIs, or synthetic AI inputs.
+Many token generators depend on heavy libraries or unsafe randomness.  
+`generate-token` is minimal, deterministic (if seeded), and dependency-free — perfect for reproducible tests, mock APIs, and secure token generation.
 
 ---
 
 ## 🌟 Features
 
-- ✅ Deterministic output via `seed`
-- ✅ Names, emails, phones (E.164-ish), addresses, companies
-- ✅ Pure ESM, no deps, O(n)
-- ✅ Works in Node, Deno, Bun, or browser
-- ✅ Generates entire fake datasets in O(n)
+- ✅ Cryptographically secure randomness (`crypto.getRandomValues`)  
+- ✅ Supports `uuid`, `hex`, `base64`, and `numeric` formats  
+- ✅ Deterministic output via `seed` for reproducible results  
+- ✅ Works in Node.js, Deno, Bun, and browsers  
+- ✅ No dependencies — pure ESM  
 
 ---
 
 ## 📦 Usage
 
 ```js
-import { rows, rng, user } from './fake.js';
+import { generateToken } from './token.js';
 
-// Generate deterministic fake dataset
-console.log(rows(3, 42));
-// → array of 3 user objects
+// Generate a UUID (default)
+console.log(generateToken());
+// → 'd3b44a76-8c5b-4f7b-89c7-4f47f60dc0a1'
 
-// Generate a single deterministic user
-const R = rng(42);
-console.log(user(R));
-// → { id: "u_123456", name: "Emma Brown", ... }
+// Generate a 32-character hex token
+console.log(generateToken({ type: 'hex', length: 32 }));
+// → '4fa91c28a7b53d1c2e64a9f6bc71d4ce'
+
+// Generate a 16-character base64 token
+console.log(generateToken({ type: 'base64', length: 16 }));
+// → 'QkVbSy9xY1Z0Z1hP'
+
+// Generate a numeric token
+console.log(generateToken({ type: 'numeric', length: 10 }));
+// → '5829034710'
+
+// Deterministic UUID
+console.log(generateToken({ type: 'uuid', seed: 'demo-seed' }));
+// → always the same UUID for that seed
 ```
 
 ---
@@ -44,18 +55,15 @@ console.log(user(R));
 ## 🧠 API
 
 ```ts
-rng(seed?: number|string): () => number
-rows(count?: number, seed?: number|string): Array<User>
-user(R?: () => number): User
-firstName(R): string
-lastName(R): string
-fullName(R): string
-email(name?: string, R?, domain?: string): string
-phoneE164(R, cc?: string): string
-address(R): { line1, city, state, zip, country }
-company(R): string
+generateToken(options?: TokenOptions): string
+
+type TokenOptions = {
+  type?: 'uuid' | 'hex' | 'base64' | 'numeric';
+  length?: number;   // ignored for uuid
+  seed?: string | null;
+};
 ```
-Returns a string containing the generated password.
+Returns a token string in the specified format.
 
 ---
 
@@ -63,46 +71,38 @@ Returns a string containing the generated password.
 
 ```bash
 {
-  "id": "u_391823",
-  "name": "Ava Johnson",
-  "email": "ava.johnson@example.com",
-  "phone": "+15554443322",
-  "address": {
-    "line1": "8741 Maple St",
-    "city": "Austin",
-    "state": "TX",
-    "zip": "78701",
-    "country": "US"
-  },
-  "company": "Quantum Labs"
+  "uuid": "f33a9a3e-dc2b-4b3b-a29e-8adad58a4770",
+  "hex": "8e97ab4c291d5a7fbe21004da05a7f1b",
+  "base64": "X1pjUWFkR2x4R2E=",
+  "numeric": "5829034710"
 }
 ```
 
 ## 🧪 Browser test
 
-Open `fake-test.html` in your browser  
+Open `token-test.html` in your browser  
 or try the hosted demo 👉🏻 
-[Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
+[Generate Token Test](https://yvancg.github.io/generators/generate-token/token-test.html)
 
 ---
 
 ## 🛠 Development
 
-This module is standalone. Copy `fake.js` into your project.  
+This module is standalone. Copy `token.js` into your project.  
 No `npm install` or build step required.
 
 Run quick test in Node:
 ```bash
-node --input-type=module -e "import('./fake.js').then(m=>console.log(m.rows(3,42)))"
+node --input-type=module -e "import('./token.js').then(m=>console.log(m.generateToken({type:'uuid'})))"
 ```
 
 ---
 
 ## 🔒 Notes
 
-•	Phone format is simple +CC + 10 digits for portability.
-•	Datasets are tiny on purpose; extend arrays as needed.
-•	No PII sources; all names/domains are generic.
+•	Uses browser or Node crypto API when available.
+•	The seed option makes output deterministic (useful for tests, not production).
+•	All randomness and output formats are self-contained; no external entropy sources.
   
 ---
 
