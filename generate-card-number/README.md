@@ -28,16 +28,10 @@ Most Lorem Ipsum tools depend on large libraries or unsafe random generators.
 ## 📦 Usage
 
 ```js
-import { generateLorem } from './lorem.js';
+import { generateCard } from './card.js';
 
-// Generate 10 words
-console.log(generateLorem({ units: 'words', count: 10 }));
-
-// Generate 2 sentences
-console.log(generateLorem({ units: 'sentences', count: 2 }));
-
-// Generate 3 paragraphs with a seed
-console.log(generateLorem({ units: 'paragraphs', count: 3, seed: 'demo', separator: '\n\n' }));
+console.log(generateCard({ brand: 'visa', seed: 'demo' }));
+// -> { number: '4111...1234', brand: 'visa', expiry: '09/28', cvc: '123' }
 ```
 
 ---
