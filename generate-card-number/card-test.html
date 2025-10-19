@@ -32,7 +32,7 @@
 
   <label>
     Prefix (optional)
-    <input id="prefix" placeholder="e.g. 400000 or leave empty"/>
+    <input id="prefix" inputmode="numeric" pattern="\d*" placeholder="e.g. 400000 or leave empty"/>    
     <div class="hint">If blank, brand prefixes are used. If brand empty, a random BIN-like prefix is used.</div>
   </label>
 
@@ -55,7 +55,7 @@
   <pre id="output">Click "Generate"</pre>
 
   <script type="module">
-    import { generateCardNumber } from './card.js';
+    import { generateCard } from './card.js';
     const $ = id => document.getElementById(id);
     const out = $('output');
     const copyBtn = $('copy');
