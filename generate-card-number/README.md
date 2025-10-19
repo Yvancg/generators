@@ -3,25 +3,25 @@
 [![card gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/card.js.json)](../metrics/card.js.json)
 [![card ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/card.json)](../bench/card.json)
 
-**generate-card-number** creates seedable, dependency-free fake data for tests, demos, and AI dataset prototyping.
+**generate-card-number** creates valid, Luhn-compliant card numbers, expiry dates, and CVCs for testing and demo environments.
 
 ---
 
 ## 🚀 Why
 
-Most Lorem Ipsum tools depend on large libraries or unsafe random generators.  
-`generate-card-number` is compact, deterministic, and dependency-free — ideal for reproducible content, AI dataset stubs, or testing pipelines.
+Most credit card generators depend on unsafe randomness or incomplete patterns.  
+`generate-card-number` is deterministic (optional `seed`), dependency-free, and pure ESM — ideal for secure, offline test data generation.
 
 ---
 
 ## 🌟 Features
 
+- ✅ Valid Luhn-compliant card numbers  
+- ✅ Supports Visa, Mastercard, Amex, Discover  
+- ✅ Generates expiry (`MM/YY`) and valid 3–4-digit CVC  
 - ✅ Deterministic output via `seed`  
-- ✅ Generates words, sentences, or paragraphs  
-- ✅ Adjustable word and sentence ranges  
-- ✅ Capitalization and punctuation options  
-- ✅ Works in Node.js, Deno, Bun, or browser  
-- ✅ Zero dependencies — pure ESM  
+- ✅ Works in Node, Deno, Bun, and browser  
+- ✅ Zero dependencies  
 
 ---
 
@@ -30,8 +30,17 @@ Most Lorem Ipsum tools depend on large libraries or unsafe random generators.
 ```js
 import { generateCard } from './card.js';
 
-console.log(generateCard({ brand: 'visa', seed: 'demo' }));
-// -> { number: '4111...1234', brand: 'visa', expiry: '09/28', cvc: '123' }
+// Generate Visa test card
+console.log(generateCard({ brand: 'visa' }));
+// → { number: '4111111111111111', brand: 'visa', expiry: '08/28', cvc: '123' }
+
+// Deterministic Mastercard (same seed → same card)
+console.log(generateCard({ brand: 'mastercard', seed: 'demo-seed' }));
+// → { number: '5555555555554444', brand: 'mastercard', expiry: '04/27', cvc: '952' }
+
+// Custom prefix and length
+console.log(generateCard({ prefix: '400000', length: 16 }));
+// → { number: '4000001234567899', brand: 'visa', expiry: '10/26', cvc: '573' }
 ```
 
 ---
@@ -39,37 +48,46 @@ console.log(generateCard({ brand: 'visa', seed: 'demo' }));
 ## 🧠 API
 
 ```ts
-generateLorem(options?: LoremOptions): string
+type CardOptions = {
+  brand?: 'visa' | 'mastercard' | 'amex' | 'discover' | null;
+  prefix?: string | null;     // custom BIN/prefix
+  length?: number;            // total length (default brand standard)
+  seed?: string | null;       // deterministic seed
+  maxExpiryYears?: number;    // random expiry within N years (default 5)
+};
 
-type LoremOptions = {
-  units?: 'words' | 'sentences' | 'paragraphs';
-  count?: number;
-  seed?: string | null;
-  dictionary?: string[];
-  wordsPerSentence?: [number, number];
-  sentencesPerParagraph?: [number, number];
-  capitalize?: boolean;
-  endWithPeriod?: boolean;
-  separator?: string;
+type Card = {
+  number: string;    // Luhn-valid card number
+  brand: string;     // detected or provided brand
+  expiry: string;    // MM/YY format
+  cvc: string;       // 3- or 4-digit code
 };
 ```
-Returns a string of generated Lorem Ipsum text.
+
+**`generateCardNumber(opts)`**
+
+Returns a raw card number only (no expiry or CVC).
+
+**`generateExpiry(opts)`**
+
+Generates a valid expiry date object within the next N years.
+
+**`generateCVC(opts)`**
+
+Returns a random CVC string (4 digits for Amex, else 3).
 
 ---
 
 ## Example Output
 
 ```bash
-Lorem ipsum dolor sit amet consectetur adipiscing elit. 
-Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+{
+  "number": "4111738941524499",
+  "brand": "visa",
+  "expiry": "09/28",
+  "cvc": "317"
+}
 ```
-With a seed:
-```bash
-console.log(generateLorem({ units: 'sentences', count: 2, seed: 'demo' }));
-# Lorem dolore pariatur anim exercitation officia.
-# Fugiat id consequat tempor in voluptate.
-```
-
 
 ## 🧪 Browser test
 
@@ -86,16 +104,16 @@ No `npm install` or build step required.
 
 Run quick test in Node:
 ```bash
-node --input-type=module -e "import('./card.js').then(m=>console.log(m.generateLorem({units:'sentences',count:2})))"
+node --input-type=module -e "import('./card.js').then(m=>console.log(m.generateCard({brand:'visa'})))"
 ```
 
 ---
 
 ## 🔒 Notes
 
-•	Output is synthetic and reproducible — no external data.
-•	All randomness uses crypto.getRandomValues when available.
-•	Use the seed option for deterministic test results.
+•	Generated cards are not real and will fail live payment processing.
+•	CVC and expiry are randomly generated and valid only for testing.
+•	Safe for use in mock APIs, sandbox systems, or demo dashboards.
   
 ---
 
