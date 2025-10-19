@@ -12,6 +12,10 @@ Available modules:
   [![fake gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/fake.js.json)](../metrics/fake.js.json)
   [![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake-data.json)](../bench/fake-data.json)
 
+- **generate-lorem** — Deterministic Lorem Ipsum text generator for placeholders, tests, and AI datasets.  
+[![lorem gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/lorem.js.json)](../metrics/lorem.js.json)
+[![lorem ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/lorem.json)](../bench/lorem.json)
+
 - **generate-password** — Credit card validator with Luhn check and brand detection (Visa, Mastercard, Amex, etc.).  
   [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/password.js.json)](./metrics/password.js.json)
   [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/password.json)](./bench/password.json)
@@ -28,6 +32,7 @@ Each module has its own `README.md`, tests, and can be imported individually.
 You can try each generator interactively in your browser:
 
 - [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
+- [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
 - [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
 
 Each page loads its respective module and allows interactive validation.
@@ -52,20 +57,24 @@ Each page loads its respective module and allows interactive validation.
 ## Example Usage
 
 ```js
-import { generatePassword } from './generate-password/password.js';
 import { rows, user } from './generate-fake-data/fake.js';
+import { generateLorem } from './generate-lorem/lorem.js';
+import { generatePassword } from './generate-password/password.js';
 import { generateToken } from './generate-token/token.js';
 import { generatePrompt } from './generate-prompt/prompt.js';
 import { generateColor } from './generate-color/color.js';
-
-console.log(generatePassword({ length: 16, symbols: true }));
-// → 'fP8!cN9^hK2@xQ4?'
 
 console.log(rows(3, 42));
 // → array of 3 fake user objects (deterministic)
 
 console.log(user());
 // → { id: "u_123456", name: "Ava Johnson", ... }
+
+console.log(generatePassword({ length: 16, symbols: true }));
+// → 'fP8!cN9^hK2@xQ4?'
+
+console.log(generateLorem({ units: 'sentences', count: 2 }));
+// → 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
 
 console.log(generateToken(32));
 // → 'b1f94e1d28a2ef3e3a6f0b8e7e9cc041'
@@ -87,6 +96,7 @@ generators/
   ├─ README.md
   ├─ SECURITY.md
   ├─ generate-fake-data/
+  ├─ generate-lorem/
   ├─ generate-password/
   └─ generate-/
 ```
