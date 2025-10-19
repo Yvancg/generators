@@ -1,2 +1,98 @@
-# generators
-A toolkit of lightweight generators for developers and AI projects. Create passwords, tokens, fake data, Lorem Ipsum, color palettes, prompt templates, synthetic datasets, and model configs. Perfect for testing, prototyping, and automation with clean JSON, text, or YAML output.
+# Generators
+
+A collection of minimal, dependency-free generators for developers, testers, and AI builders.
+
+## Overview
+
+**Generators** provides fast, auditable modules for creating random or structured content — passwords, fake data, prompts, datasets, colors, and more — without large dependencies or opaque APIs. Each module is designed for portability, reproducibility, and simplicity.
+
+Available modules:
+
+- **is-card-safe** — Credit card validator with Luhn check and brand detection (Visa, Mastercard, Amex, etc.).  
+  [![card gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/card.js.json)](./metrics/card.js.json)
+  [![card ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/card.json)](./bench/card.json)
+
+All helpers are designed for use in:
+- Browsers (ESM)
+- Node.js / Deno / Bun (import)
+- Edge runtimes (Cloudflare Workers, Vercel Edge, etc.)
+
+Each module has its own `README.md`, tests, and can be imported individually.
+
+## 🔗 Live Demos (GitHub Pages)
+
+You can try each generator interactively in your browser:
+
+- [Card Validator Test](https://yvancg.github.io/validators/is-card-safe/card-test.html)
+
+Each page loads its respective module and allows interactive validation.
+
+## Install
+
+`npm i @yvancg/generators`  # or per-module packages when published
+
+## API Guarantees
+
+- No eval or dynamic code.
+- Regexes fuzz-tested for catastrophic backtracking.
+
+## Design Principles
+
+1. **Deterministic randomness**: Supports fixed seeds for reproducibility.
+2. **Zero dependencies**: Small and secure.
+3. **Cross-runtime**: Runs anywhere ESM works.
+4. **Predictable output**: Always valid and formatted.
+5. **Composable**: Each generator is a pure function.
+
+## Example Usage
+
+```js
+import { validateCard } from './is-card-safe/card.js';
+
+console.log(isVatSafe('DE123456789'));                      // { ok: true, country: 'DE', ... }
+```
+
+## Folder Structure
+
+```
+generators/
+  ├─ .github/
+  │   └─ FUNDING.yml
+  ├─ LICENSE
+  ├─ README.md
+  ├─ SECURITY.md
+  ├─ is-card-safe/
+  └─ is-vat-safe/
+```
+
+## Security Notes
+
+- Uses `crypto.getRandomValues` or `crypto.randomBytes` for entropy.
+- No external network requests.
+- All JSON/YAML outputs sanitized.
+
+## Contributing
+
+Pull requests for additional safe validators (e.g., IBAN, domain names, etc.) are welcome. Please maintain the following rules:
+
+- Pure ESM or TypeScript modules
+- No external dependencies
+- 100% test coverage
+- Keep logic under 150 lines per module
+
+## License
+
+Licensed under the **MIT License** — see [LICENSE](./LICENSE).
+
+## Funding
+
+If you find this project useful, please consider sponsoring its continued maintenance and security audits.
+
+You can sponsor this project through:
+
+- GitHub Sponsors: [https://github.com/sponsors/yvancg](https://github.com/sponsors/yvancg)
+- Or any link listed in `.github/FUNDING.yml`
+
+---
+
+© 2025 Y Consulting LLC / Validators Project
