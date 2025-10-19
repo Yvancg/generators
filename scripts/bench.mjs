@@ -2,7 +2,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { performance }              from 'node:perf_hooks';
 
 // --- Import targets explicitly to avoid discovery misses ---
-import { isUrlSafe }    			from '../generate-password/password.js';
+import { generatePassword }    			from '../generate-password/password.js';
 
 function bench(fn, iters) {
   for (let i = 0; i < Math.min(100, iters); i++) fn();
@@ -13,8 +13,11 @@ function bench(fn, iters) {
 }
 
 const targets = [
-  { name: 'url',    fn: () => isUrlSafe('https://example.com?q=1'),             iters: 20000 },
-];
+  {
+    name: 'password',
+    fn: () => generatePassword({ length: 16, symbols: true, numbers: true, uppercase: true, lowercase: true }),
+    iters: 200_000
+  },
 
 let wrote = 0;
 for (const t of targets) {
