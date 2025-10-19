@@ -1,5 +1,5 @@
 // generate-fake-data/fake.js
-// Seedable fake data generator. No deps. O(n). Pure ESM.
+// Seedable fake data generator. No deps. O(n). Pure ESM. 
 
 const FIRST = ['Liam','Noah','Olivia','Emma','Ava','Mia','Amelia','Sophia','Isabella','James','Lucas','Ethan','Mason','Logan','Elijah','Aiden','Harper','Evelyn','Abigail','Ella'];
 const LAST  = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee'];
