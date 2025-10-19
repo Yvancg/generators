@@ -8,6 +8,10 @@ A collection of minimal, dependency-free generators for developers, testers, and
 
 Available modules:
 
+- **generate-fake-data** — .  
+  [![fake gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/fake.js.json)](../metrics/fake.js.json)
+  [![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake-data.json)](../bench/fake-data.json)
+
 - **generate-password** — Credit card validator with Luhn check and brand detection (Visa, Mastercard, Amex, etc.).  
   [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/password.js.json)](./metrics/password.js.json)
   [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/password.json)](./bench/password.json)
@@ -23,7 +27,8 @@ Each module has its own `README.md`, tests, and can be imported individually.
 
 You can try each generator interactively in your browser:
 
-- [Generate Fake Data Test](https://yvancg.github.io/generators/generate-password/password-test.html)
+- [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
+- [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
 
 Each page loads its respective module and allows interactive validation.
 
@@ -61,8 +66,9 @@ generators/
   ├─ LICENSE
   ├─ README.md
   ├─ SECURITY.md
+  ├─ generate-fake-data/
   ├─ generate-password/
-  └─ generate-fake-data/
+  └─ generate-/
 ```
 
 ## Security Notes
