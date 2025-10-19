@@ -2,8 +2,9 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { performance }              from 'node:perf_hooks';
 
 // --- Import targets explicitly to avoid discovery misses ---
-import { generatePassword } from '../generate-password/password.js';
 import { rows }             from '../generate-fake-data/fake.js';
+import { generateLorem } from '../generate-lorem/lorem.js';
+import { generatePassword } from '../generate-password/password.js';
 
 // ensure output dir
 mkdirSync('bench', { recursive: true });
@@ -18,14 +19,19 @@ function bench(fn, iters) {
 
 const targets = [
   {
-    name: 'password',
-    fn: () => generatePassword({ length: 16, symbols: true, numbers: true, uppercase: true, lowercase: true }),
-    iters: 200_000
-  },
-  {
     name: 'fake-data',
     fn: () => rows(50, 1234), // generate 50 users deterministically
     iters: 600
+  },
+    {
+    name: 'lorem',
+    fn: () => generateLorem({ units: 'sentences', count: 3 }),
+    iters: 50_000
+  },
+  {
+    name: 'password',
+    fn: () => generatePassword({ length: 16, symbols: true, numbers: true, uppercase: true, lowercase: true }),
+    iters: 200_000
   }
 ];
 
