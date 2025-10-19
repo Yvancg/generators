@@ -20,6 +20,10 @@ Available modules:
   [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/password.js.json)](./metrics/password.js.json)
   [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/password.json)](./bench/password.json)
 
+- **generate-token** — Cryptographically secure token and UUID generator for authentication, API keys, and identifiers.  
+  [![token gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/token.js.json)](../metrics/token.js.json)
+  [![token ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/token.json)](../bench/token.json)
+
 All helpers are designed for use in:
 - Browsers (ESM)
 - Node.js / Deno / Bun (import)
@@ -34,6 +38,7 @@ You can try each generator interactively in your browser:
 - [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
 - [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
 - [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
+- [Generate Token Test](https://yvancg.github.io/generators/generate-token/token-test.html)
 
 Each page loads its respective module and allows interactive validation.
 
@@ -61,8 +66,6 @@ import { rows, user } from './generate-fake-data/fake.js';
 import { generateLorem } from './generate-lorem/lorem.js';
 import { generatePassword } from './generate-password/password.js';
 import { generateToken } from './generate-token/token.js';
-import { generatePrompt } from './generate-prompt/prompt.js';
-import { generateColor } from './generate-color/color.js';
 
 console.log(rows(3, 42));
 // → array of 3 fake user objects (deterministic)
@@ -76,14 +79,8 @@ console.log(generatePassword({ length: 16, symbols: true }));
 console.log(generateLorem({ units: 'sentences', count: 2 }));
 // → 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
 
-console.log(generateToken(32));
+console.log(generateToken({ type: 'hex', length: 32 }));
 // → 'b1f94e1d28a2ef3e3a6f0b8e7e9cc041'
-
-console.log(generatePrompt('Write a haiku about the sea.'));
-// → 'Prompt: Write a haiku about the sea.'
-
-console.log(generateColor({ palette: 5 }));
-// → ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#6366f1']
 ```
 
 ## Folder Structure
@@ -98,7 +95,7 @@ generators/
   ├─ generate-fake-data/
   ├─ generate-lorem/
   ├─ generate-password/
-  └─ generate-/
+  └─ generate-token/
 ```
 
 ## Security Notes
