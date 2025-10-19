@@ -42,7 +42,7 @@ export function generatePassword(options = {}) {
   return result.join('');
 }
 
-// ---- Helpers ----
+// ---- Helpers ---- 
 
 function cryptoRandomInt(min, max) {
   const range = max - min;
