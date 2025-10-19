@@ -120,6 +120,64 @@ function seededRNG(seed) {
   };
 }
 
+// add after helpers in card.js
+
+// Generate MM/YY expiry within next `maxYears` (default 5)
+export function generateExpiry(options = {}) {
+  const { maxYears = 5, rng = cryptoRNG() } = options;
+  const now = new Date();
+  const startMonth = now.getMonth() + 1; // 1-12
+  const startYear = now.getFullYear();
+  // choose months ahead from 0 .. maxYears*12-1
+  const monthsAhead = rng() % (maxYears * 12);
+  const totalMonths = (startMonth - 1) + monthsAhead;
+  const month = (totalMonths % 12) + 1;
+  const year = startYear + Math.floor(totalMonths / 12);
+  // format MM/YY
+  return {
+    month: String(month).padStart(2, '0'),
+    year: String(year).slice(-2),
+    monthInt: month,
+    yearFull: year
+  };
+}
+
+// Generate CVC based on brand (amex => 4 digits else 3)
+export function generateCVC(options = {}) {
+  const { brand = null, rng = cryptoRNG() } = options;
+  const len = (brand === 'amex') ? 4 : 3;
+  let out = '';
+  for (let i = 0; i < len; i++) out += String(rng() % 10);
+  return out;
+}
+
+// Convenience wrapper that returns an object: { number, brand, exp, cvc }
+export function generateCard(options = {}) {
+  const { brand = 'visa', prefix = null, length = undefined, seed = null, maxExpiryYears = 5 } = options;
+  // Use same seed for all parts if provided
+  const seedBase = seed ? String(seed) : null;
+  const number = generateCardNumber({ brand, prefix, length, seed: seedBase });
+  const rngForExpiry = seedBase ? seededRNG(seedBase + '-exp') : cryptoRNG();
+  const exp = generateExpiry({ maxYears: maxExpiryYears, rng: rngForExpiry });
+  const rngForCvc = seedBase ? seededRNG(seedBase + '-cvc') : cryptoRNG();
+  const cvc = generateCVC({ brand, rng: rngForCvc });
+  return {
+    number,
+    brand: brand || detectBrandFromNumber(number),
+    expiry: `${exp.month}/${exp.year}`,
+    cvc
+  };
+}
+
+// small helper to detect brand if not provided (best-effort)
+function detectBrandFromNumber(num) {
+  if (/^3[47]/.test(num)) return 'amex';
+  if (/^4/.test(num)) return 'visa';
+  if (/^(5[1-5]|2(2[2-9]|[3-7]))/.test(num)) return 'mastercard';
+  if (/^(6011|65|64[4-9])/.test(num)) return 'discover';
+  return 'unknown';
+}
+
 // Example usage:
 // console.log(generateCardNumber({ brand: 'visa' }));
 // console.log(generateCardNumber({ brand: 'amex' }));
