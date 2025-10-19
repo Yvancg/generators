@@ -8,9 +8,9 @@ A collection of minimal, dependency-free generators for developers, testers, and
 
 Available modules:
 
-- **is-card-safe** — Credit card validator with Luhn check and brand detection (Visa, Mastercard, Amex, etc.).  
-  [![card gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/card.js.json)](./metrics/card.js.json)
-  [![card ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/card.json)](./bench/card.json)
+- **generate-password** — Credit card validator with Luhn check and brand detection (Visa, Mastercard, Amex, etc.).  
+  [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/password.js.json)](./metrics/password.js.json)
+  [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/password.json)](./bench/password.json)
 
 All helpers are designed for use in:
 - Browsers (ESM)
@@ -23,7 +23,7 @@ Each module has its own `README.md`, tests, and can be imported individually.
 
 You can try each generator interactively in your browser:
 
-- [Card Validator Test](https://yvancg.github.io/validators/is-card-safe/card-test.html)
+- [Generate Fake Data Test](https://yvancg.github.io/generators/generate-password/password-test.html)
 
 Each page loads its respective module and allows interactive validation.
 
@@ -61,8 +61,8 @@ generators/
   ├─ LICENSE
   ├─ README.md
   ├─ SECURITY.md
-  ├─ is-card-safe/
-  └─ is-vat-safe/
+  ├─ generate-password/
+  └─ generate-fake-data/
 ```
 
 ## Security Notes
