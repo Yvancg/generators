@@ -81,7 +81,7 @@ console.log(generateLorem({ units: 'sentences', count: 2, seed: 'demo' }));
 
 Open `lorem-test.html` in your browser  
 or try the hosted demo 👉🏻 
-[Generate Lorem Iprsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
+[Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
 
 ---
 
