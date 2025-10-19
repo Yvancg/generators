@@ -1,9 +1,9 @@
 # generate-card-number
 
-[![lorem gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/lorem.js.json)](../metrics/lorem.js.json)
-[![lorem ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/lorem.json)](../bench/lorem.json)
+[![card gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/card.js.json)](../metrics/card.js.json)
+[![card ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/card.json)](../bench/card.json)
 
-**generate-lorem** creates seedable, dependency-free fake data for tests, demos, and AI dataset prototyping.
+**generate-card-number** creates seedable, dependency-free fake data for tests, demos, and AI dataset prototyping.
 
 ---
 
@@ -79,20 +79,20 @@ console.log(generateLorem({ units: 'sentences', count: 2, seed: 'demo' }));
 
 ## 🧪 Browser test
 
-Open `lorem-test.html` in your browser  
+Open `card-test.html` in your browser  
 or try the hosted demo 👉🏻 
-[Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
+[Generate Card Number Test](https://yvancg.github.io/generators/generate-card-number/card-test.html)
 
 ---
 
 ## 🛠 Development
 
-This module is standalone. Copy `lorem.js` into your project.  
+This module is standalone. Copy `card.js` into your project.  
 No `npm install` or build step required.
 
 Run quick test in Node:
 ```bash
-node --input-type=module -e "import('./lorem.js').then(m=>console.log(m.generateLorem({units:'sentences',count:2})))"
+node --input-type=module -e "import('./card.js').then(m=>console.log(m.generateLorem({units:'sentences',count:2})))"
 ```
 
 ---
