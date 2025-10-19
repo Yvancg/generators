@@ -173,8 +173,8 @@ export function generateCard(options = {}) {
 function detectBrandFromNumber(num) {
   if (/^3[47]/.test(num)) return 'amex';
   if (/^4/.test(num)) return 'visa';
-  if (/^(5[1-5]|2(2[2-9]|[3-7]))/.test(num)) return 'mastercard';
-  if (/^(6011|65|64[4-9])/.test(num)) return 'discover';
+  if (/^(?:5[1-5]|22[2-9]|2[3-6]|27[01]|2720)/.test(num)) return 'mastercard';
+  if (/^(?:6011|65|64[4-9])/.test(num)) return 'discover';
   return 'unknown';
 }
 
