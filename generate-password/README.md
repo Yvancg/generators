@@ -1,4 +1,4 @@
-# password-generator
+# generate-password
 
 [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/password.js.json)](../metrics/password.js.json)
 [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/password.json)](../bench/password.json)
