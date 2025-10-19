@@ -2,11 +2,11 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { performance }              from 'node:perf_hooks';
 
 // --- Import targets explicitly to avoid discovery misses ---
+import { generateCard }      from '../generate-card-number/card.js';
 import { rows }              from '../generate-fake-data/fake.js';
 import { generateLorem }     from '../generate-lorem/lorem.js';
 import { generatePassword }  from '../generate-password/password.js';
 import { generateToken }     from '../generate-token/token.js';
-import { generateCard }      from './card.js';
 
 // ensure output dir
 mkdirSync('bench', { recursive: true });
@@ -25,12 +25,12 @@ const iters = {
   passwd: Number(process.env.PASS_ITERS   || 200_000),
 };
 
-const targets = [
+const targets = [ 
+  { name: 'card',      fn: () => generateCard({ brand: 'visa', seed: 'bench' }), iters: 100_000 },
   { name: 'fake-data', fn: () => rows(50, 1234), iters: iters.fake },
   { name: 'lorem',     fn: () => generateLorem({ units: 'sentences', count: 3 }), iters: iters.lorem },
   { name: 'password',  fn: () => generatePassword({ length: 16, symbols: true, numbers: true, uppercase: true, lowercase: true }), iters: iters.passwd },
   { name: 'token',     fn: () => generateToken({ type: 'hex', length: 32 }), iters: 100_000 },
-  { name: 'card',      fn: () => generateCard({ brand: 'visa', seed: 'bench' }), iters: 100_000 },
 ];
 
 let wrote = 0;
