@@ -2,7 +2,11 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { performance }              from 'node:perf_hooks';
 
 // --- Import targets explicitly to avoid discovery misses ---
-import { generatePassword }    			from '../generate-password/password.js';
+import { generatePassword } from '../generate-password/password.js';
+import { rows }             from '../generate-fake-data/fake.js';
+
+// ensure output dir
+mkdirSync('bench', { recursive: true });
 
 function bench(fn, iters) {
   for (let i = 0; i < Math.min(100, iters); i++) fn();
@@ -18,6 +22,12 @@ const targets = [
     fn: () => generatePassword({ length: 16, symbols: true, numbers: true, uppercase: true, lowercase: true }),
     iters: 200_000
   },
+  {
+    name: 'fake-data',
+    fn: () => rows(50, 1234), // generate 50 users deterministically
+    iters: 600
+  }
+];
 
 let wrote = 0;
 for (const t of targets) {
