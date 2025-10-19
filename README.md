@@ -8,7 +8,7 @@ A collection of minimal, dependency-free generators for developers, testers, and
 
 Available modules:
 
-- **generate-fake-data** — .  
+- **generate-fake-data** — Seedable, dependency-free fake data generator.  
   [![fake gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/fake.js.json)](../metrics/fake.js.json)
   [![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake-data.json)](../bench/fake-data.json)
 
@@ -52,9 +52,29 @@ Each page loads its respective module and allows interactive validation.
 ## Example Usage
 
 ```js
-import { validateCard } from './is-card-safe/card.js';
+import { generatePassword } from './generate-password/password.js';
+import { rows, user } from './generate-fake-data/fake.js';
+import { generateToken } from './generate-token/token.js';
+import { generatePrompt } from './generate-prompt/prompt.js';
+import { generateColor } from './generate-color/color.js';
 
-console.log(isVatSafe('DE123456789'));                      // { ok: true, country: 'DE', ... }
+console.log(generatePassword({ length: 16, symbols: true }));
+// → 'fP8!cN9^hK2@xQ4?'
+
+console.log(rows(3, 42));
+// → array of 3 fake user objects (deterministic)
+
+console.log(user());
+// → { id: "u_123456", name: "Ava Johnson", ... }
+
+console.log(generateToken(32));
+// → 'b1f94e1d28a2ef3e3a6f0b8e7e9cc041'
+
+console.log(generatePrompt('Write a haiku about the sea.'));
+// → 'Prompt: Write a haiku about the sea.'
+
+console.log(generateColor({ palette: 5 }));
+// → ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#6366f1']
 ```
 
 ## Folder Structure
