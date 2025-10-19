@@ -69,27 +69,32 @@ function randRange(min, max, rng) {
   return min + (rng() % span);
 }
 
-// Crypto RNG returns uniform 32-bit integers
+// Crypto RNG returns uniform 32-bit integers (no await)
 function cryptoRNG() {
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+  // Browser or Node >= 19 (webcrypto)
+  if (globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
     return () => {
       const u32 = new Uint32Array(1);
-      crypto.getRandomValues(u32);
+      globalThis.crypto.getRandomValues(u32);
       return u32[0] >>> 0;
     };
   }
-  // Node fallback
-  try {
-    const { randomBytes } = await import('node:crypto');
+  // Node fallback if randomBytes exists on global crypto (older Node)
+  if (globalThis.crypto && typeof globalThis.crypto.randomBytes === 'function') {
     return () => {
-      const b = randomBytes(4);
+      const b = globalThis.crypto.randomBytes(4);
       return (b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24)) >>> 0;
     };
-  } catch {
-    // Not crypto-safe. For completeness only.
-    let x = 0x9e3779b9 ^ Date.now();
-    return () => (x = (x + 0x6d2b79f5) | 0, x ^ (x >>> 15));
   }
+  // Last resort: small xorshift-like PRNG (not crypto-safe)
+  let x = 0x9e3779b9 ^ Date.now();
+  return () => {
+    x = (x + 0x6d2b79f5) | 0;
+    x ^= x >>> 15;
+    x = Math.imul(x, 1 | x);
+    x ^= x >>> 7;
+    return (x ^ (x >>> 14)) >>> 0;
+  };
 }
 
 // Deterministic integer RNG from string seed (xorshift-like mix)
@@ -117,8 +122,3 @@ const DEFAULT_DICT = Object.freeze([
   'pariatur','excepteur','sint','occaecat','cupidatat','non','proident',
   'sunt','in','culpa','qui','officia','deserunt','mollit','anim','id','est','laborum'
 ]);
-
-// Example usage:
-// console.log(generateLorem({ units: 'words', count: 10 }));
-// console.log(generateLorem({ units: 'sentences', count: 2, seed: 'demo' }));
-// console.log(generateLorem({ units: 'paragraphs', count: 2, separator: '\n\n' }));
