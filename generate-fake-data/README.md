@@ -1,16 +1,16 @@
 # generate-fake-data
 
 [![fake gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/fake.js.json)](../metrics/fake.js.json)
-[![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake.json)](../bench/fake.json)
+[![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake-data.json)](../bench/fake-data.json)
 
-**generate-fake-data** creates seedable, dependency-free fake data for tests and demos.
+**generate-fake-data** creates seedable, dependency-free fake data for tests, demos, and AI dataset prototyping.
 
 ---
 
 ## 🚀 Why
 
-Most password generators depend on heavy libraries, weak pseudo-randomness, or unsafe string operations.  
-`generate-password` is a small, auditable, and crypto-safe module that runs everywhere with zero dependencies.
+Most fake data libraries rely on massive datasets or unsafe randomness.
+`generate-fake-data` is small, deterministic, and dependency-free — ideal for reproducible test runs, mock APIs, or synthetic AI inputs.
 
 ---
 
@@ -19,45 +19,30 @@ Most password generators depend on heavy libraries, weak pseudo-randomness, or u
 - ✅ Deterministic output via `seed`
 - ✅ Names, emails, phones (E.164-ish), addresses, companies
 - ✅ Pure ESM, no deps, O(n)
+- ✅ Works in Node, Deno, Bun, or browser
+- ✅ Generates entire fake datasets in O(n)
 
 ---
 
 ## 📦 Usage
 
 ```js
-import { generatePassword } from './password.js';
+import { rows, rng, user } from './fake.js';
 
-generatePassword();
-// → 'fP8!cN9^hK2@xQ4?'
+// Generate deterministic fake dataset
+console.log(rows(3, 42));
+// → array of 3 user objects
 
-generatePassword({ length: 20, symbols: false });
-// → 'aJh7yP3bLq0vFs2TmR8z'
-
-generatePassword({ length: 12, seed: 'demo-seed' });
-// → 'Xp7aK4FqJr2b'
+// Generate a single deterministic user
+const R = rng(42);
+console.log(user(R));
+// → { id: "u_123456", name: "Emma Brown", ... }
 ```
-
----
-
-## Options
-
-| Option     | Type          | Default | Description                     |
-|-------------|---------------|----------|---------------------------------|
-| `length`   | number        | 16       | Password length                 |
-| `symbols`  | boolean       | true     | Include special characters      |
-| `numbers`  | boolean       | true     | Include digits                  |
-| `uppercase`| boolean       | true     | Include A–Z                     |
-| `lowercase`| boolean       | true     | Include a–z                     |
-| `seed`     | string / null | null     | Deterministic output if provided |
 
 ---
 
 ## 🧠 API
 
-### `generatePassword(options?: GenerateOptions): string`
-
-**Options**
-```ts
 ```ts
 rng(seed?: number|string): () => number
 rows(count?: number, seed?: number|string): Array<User>
@@ -74,9 +59,28 @@ Returns a string containing the generated password.
 
 ---
 
+## Example Output
+
+```bash
+{
+  "id": "u_391823",
+  "name": "Ava Johnson",
+  "email": "ava.johnson@example.com",
+  "phone": "+15554443322",
+  "address": {
+    "line1": "8741 Maple St",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78701",
+    "country": "US"
+  },
+  "company": "Quantum Labs"
+}
+```
+
 ## 🧪 Browser test
 
-Open `password-test.html` in your browser  
+Open `fake-test.html` in your browser  
 or try the hosted demo 👉🏻 
 [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
 
@@ -84,12 +88,12 @@ or try the hosted demo 👉🏻
 
 ## 🛠 Development
 
-This module is standalone. Copy `password.js` into your project.  
+This module is standalone. Copy `fake.js` into your project.  
 No `npm install` or build step required.
 
 Run quick test in Node:
 ```bash
-node --input-type=module -e "import('./password.js').then(m=>console.log(m.generatePassword({length:16})))"
+node --input-type=module -e "import('./fake.js').then(m=>console.log(m.rows(3,42)))"
 ```
 
 ---
