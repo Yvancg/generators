@@ -44,6 +44,7 @@ If you discover a security issue or suspect a potential vulnerability:
 ## Scope
 
 This policy applies to all modules in the **Validators** repository:
+- `generate-card-number`
 - `generate-fake-data`
 - `generate-lorem`
 - `generate-hash`
