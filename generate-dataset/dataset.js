@@ -133,6 +133,11 @@ function csvCell(v, delim) {
 }
 function csvLine(vals, delim, raw=false){ return (raw? vals.join(delim) : vals.map(v=>String(v)).join(delim)); }
 
+function pick(arr, rng) {
+  if (!Array.isArray(arr) || arr.length === 0) throw new Error('pick() requires a non-empty array');
+  return arr[rng() % arr.length];
+}
+
 // ---- RNG + UUID ----
 function cryptoRNG(){
   if (globalThis.crypto?.getRandomValues) {
