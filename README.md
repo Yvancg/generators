@@ -12,6 +12,10 @@ Available modules:
   [![card gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/card.js.json)](./metrics/card.js.json)
   [![card ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/card.json)](./bench/card.json)
 
+- **generate-color** — Random or deterministic color palette generator (HEX, RGB, HSL)
+  [![color gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/color.js.json)](./metrics/color.js.json)
+  [![color ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/color.json)](./bench/color.json)
+
 - **generate-fake-data** — Seedable, dependency-free fake data generator.  
   [![fake gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/fake.js.json)](../metrics/fake.js.json)
   [![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake-data.json)](../bench/fake-data.json)
@@ -48,6 +52,7 @@ Each module has its own `README.md`, tests, and can be imported individually.
 You can try each generator interactively in your browser:
 
 - [Generate Card Number Test](https://yvancg.github.io/generators/generate-card-number/card-test.html)
+- [Generate Color Test](https://yvancg.github.io/generators/generate-color/color-test.html)
 - [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
 - [Generate Hash Test](https://yvancg.github.io/generators/generate-hash/hash-test.html)
 - [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
@@ -124,6 +129,7 @@ generators/
   ├─ scripts/
   │   └─ bench.mjs
   ├─ generate-card-number/
+  ├─ generate-color/
   ├─ generate-fake-data/
   ├─ generate-hash/
   ├─ generate-lorem/
