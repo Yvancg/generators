@@ -12,7 +12,7 @@ Available modules:
   [![card gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/card.js.json)](./metrics/card.js.json)
   [![card ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/card.json)](./bench/card.json)
 
-- **generate-color** — Random or deterministic color palette generator (HEX, RGB, HSL)
+- **generate-color** — Random or deterministic color palette generator (HEX, RGB, HSL)  
   [![color gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/color.js.json)](./metrics/color.js.json)
   [![color ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/color.json)](./bench/color.json)
 
