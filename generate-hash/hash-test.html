@@ -1,0 +1,77 @@
+<!-- generate-hash/hash-test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hash Generator Test</title>
+  <style>
+    body{font-family:ui-monospace,monospace;background:#fafafa;color:#222;max-width:800px;margin:40px auto;padding:20px}
+    h1{font-size:1.4rem;margin-bottom:1rem}
+    label{display:block;margin-top:10px}
+    select,textarea,input[type="text"]{padding:6px}
+    textarea{width:100%;min-height:100px;resize:vertical}
+    .row{display:flex;gap:10px;align-items:center;margin-top:16px}
+    button{padding:8px 16px;cursor:pointer;font-family:inherit}
+    pre{background:#eee;padding:12px;border-radius:6px;white-space:pre-wrap;word-break:break-all;margin-top:16px;min-height:80px}
+    .hint{color:#666;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <h1>🔒 Hash Generator Test</h1>
+
+  <label>
+    Algorithm
+    <select id="algo">
+      <option value="sha-256" selected>SHA-256</option>
+      <option value="md5">MD5</option>
+    </select>
+    <div class="hint">MD5 is insecure for cryptographic use. Prefer SHA-256.</div>
+  </label>
+
+  <label>
+    Input text
+    <textarea id="input" placeholder="Type or paste text to hash">hello world</textarea>
+  </label>
+
+  <div class="row">
+    <button id="generate">Generate</button>
+    <button id="copy" disabled>Copy</button>
+  </div>
+
+  <pre id="output">Click "Generate"</pre>
+
+  <script type="module">
+    import { generateHash } from './hash.js?v=1';
+
+    const $ = id => document.getElementById(id);
+    const out = $('output');
+    const copyBtn = $('copy');
+
+    $('generate').onclick = async () => {
+      const algo = $('algo').value;
+      const text = $('input').value;
+      try {
+        const hex = await generateHash(text, algo);
+        out.textContent = hex;
+        copyBtn.disabled = false;
+      } catch (e) {
+        console.error(e);
+        out.textContent = 'Error: ' + (e?.message || e);
+        copyBtn.disabled = true;
+      }
+    };
+
+    copyBtn.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(out.textContent);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy'), 1500);
+      } catch (e) {
+        console.error(e);
+        copyBtn.textContent = 'Error';
+      }
+    };
+  </script>
+</body>
+</html>
