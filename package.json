@@ -2,41 +2,86 @@
   "version": "2025-10-20",
   "tools": [
     {
-      "name": "generate-lorem",
-      "description": "Produces placeholder text with a specified number of sentences.",
-      "input_schema": {
-        "type": "object",
-        "properties": { "sentences": { "type": "integer" } },
-        "required": ["sentences"]
-      },
-      "rule": {
-        "type": "builtin",
-        "name": "loremIpsum",
-        "params": { "default_sentences": 3 }
-      }
-    },
-    {
-      "name": "generate-password",
-      "description": "Generates a strong random password with customizable complexity.",
+      "name": "generate-card-number",
+      "description": "Generate a Luhn-valid test card with brand, expiry, and CVC.",
       "input_schema": {
         "type": "object",
         "properties": {
-          "length": { "type": "integer" },
-          "include_symbols": { "type": "boolean" }
+          "brand": { "type": "string", "enum": ["visa", "mastercard", "amex", "discover", "random"] },
+          "seed": { "type": "integer" }
         },
-        "required": ["length"]
+        "required": []
       },
-      "rule": { "type": "builtin", "name": "passwordGenerator" }
+      "rule": { "type": "builtin", "name": "genCard", "fields": ["brand", "seed"] }
+    },
+    {
+      "name": "generate-fake-data",
+      "description": "Generate deterministic fake data rows or a single entity.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "enum": ["user", "company", "address", "rows"] },
+          "count": { "type": "integer", "minimum": 1 },
+          "seed": { "type": "integer" }
+        },
+        "required": ["kind"]
+      },
+      "rule": { "type": "builtin", "name": "fakeData", "fields": ["kind", "count", "seed"] }
     },
     {
       "name": "generate-hash",
-      "description": "Creates a SHA-256 hash from an input string.",
+      "description": "Generate a hash for a text input.",
       "input_schema": {
         "type": "object",
-        "properties": { "text": { "type": "string" } },
-        "required": ["text"]
+        "properties": {
+          "text": { "type": "string" },
+          "algo": { "type": "string", "enum": ["sha-256", "sha-1", "md5"] }
+        },
+        "required": ["text", "algo"]
       },
-      "rule": { "type": "builtin", "name": "sha256", "field": "text" }
+      "rule": { "type": "builtin", "name": "hash", "fields": ["text", "algo"] }
+    },
+    {
+      "name": "generate-lorem",
+      "description": "Generate deterministic lorem ipsum.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "units": { "type": "string", "enum": ["words", "sentences", "paragraphs"] },
+          "count": { "type": "integer", "minimum": 1 },
+          "seed": { "type": "integer" }
+        },
+        "required": ["units", "count"]
+      },
+      "rule": { "type": "builtin", "name": "lorem", "fields": ["units", "count", "seed"] }
+    },
+    {
+      "name": "generate-password",
+      "description": "Generate a password with optional symbols.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "length": { "type": "integer", "minimum": 4, "default": 16 },
+          "symbols": { "type": "boolean", "default": true },
+          "seed": { "type": "integer" }
+        },
+        "required": []
+      },
+      "rule": { "type": "builtin", "name": "password", "fields": ["length", "symbols", "seed"] }
+    },
+    {
+      "name": "generate-token",
+      "description": "Generate a token or UUID.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["hex", "base64", "uuid4"] },
+          "length": { "type": "integer", "minimum": 8 },
+          "seed": { "type": "integer" }
+        },
+        "required": ["type"]
+      },
+      "rule": { "type": "builtin", "name": "token", "fields": ["type", "length", "seed"] }
     }
   ]
 }
