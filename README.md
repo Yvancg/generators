@@ -61,8 +61,8 @@ You can try each generator interactively in your browser:
 
 - [Generate Avatar Test](https://yvancg.github.io/generators/generate-avatar/avatar-test.html)
 - [Generate Card Number Test](https://yvancg.github.io/generators/generate-card-number/card-test.html)
-- [Generate Color Test](https://yvancg.github.io/generators/generate-dataset/dataset-test.html)
-- [Generate Dataset Test](https://yvancg.github.io/generators/generate-color/color-test.html)
+- [Generate Color Test](https://yvancg.github.io/generators/generate-color/color-test.html)
+- [Generate Dataset Test](https://yvancg.github.io/generators/generate-dataset/dataset-test.html)
 - [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
 - [Generate Hash Test](https://yvancg.github.io/generators/generate-hash/hash-test.html)
 - [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
