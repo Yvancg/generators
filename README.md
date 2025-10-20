@@ -20,7 +20,7 @@ Available modules:
   [![color gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/color.js.json)](./metrics/color.js.json)
   [![color ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/color.json)](./bench/color.json)
 
-- **generate-dataset** — Generate structured JSON, JSONL, or CSV datasets for model fine-tuning or testing.
+- **generate-dataset** — Generate structured JSON, JSONL, or CSV datasets for model fine-tuning or testing.  
   [![dataset gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/dataset.js.json)](./metrics/dataset.js.json)
   [![dataset ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/dataset.json)](./bench/dataset.json)
 
