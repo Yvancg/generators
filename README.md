@@ -16,6 +16,10 @@ Available modules:
   [![fake gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/fake.js.json)](../metrics/fake.js.json)
   [![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake-data.json)](../bench/fake-data.json)
 
+- **generate-hash** — Cryptographic and legacy hash generator (SHA-256, MD5) for text inputs.  
+  [![hash gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/hash.js.json)](./metrics/hash.js.json)
+  [![hash ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/hash.json)](./bench/hash.json)
+
 - **generate-lorem** — Deterministic Lorem Ipsum text generator for placeholders, tests, and AI datasets.  
 [![lorem gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/lorem.js.json)](../metrics/lorem.js.json)
 [![lorem ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/lorem.json)](../bench/lorem.json)
@@ -41,6 +45,7 @@ You can try each generator interactively in your browser:
 
 - [Generate Card Number Test](https://yvancg.github.io/generators/generate-card-number/card-test.html)
 - [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
+- [Generate Hash Test](https://yvancg.github.io/generators/generate-hash/hash-test.html)
 - [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
 - [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
 - [Generate Token Test](https://yvancg.github.io/generators/generate-token/token-test.html)
@@ -69,6 +74,7 @@ Each page loads its respective module and allows interactive validation.
 ```js
 import { generateCard } from './card.js';
 import { rows, user } from './generate-fake-data/fake.js';
+import { generateHash } from './generate-hash/hash.js';
 import { generateLorem } from './generate-lorem/lorem.js';
 import { generatePassword } from './generate-password/password.js';
 import { generateToken } from './generate-token/token.js';
@@ -82,11 +88,15 @@ console.log(rows(3, 42));
 console.log(user());
 // → { id: "u_123456", name: "Ava Johnson", ... }
 
-console.log(generatePassword({ length: 16, symbols: true }));
-// → 'fP8!cN9^hK2@xQ4?'
+
+console.log(await generateHash('hello world', 'sha-256'));
+// → 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9'
 
 console.log(generateLorem({ units: 'sentences', count: 2 }));
 // → 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+
+console.log(generatePassword({ length: 16, symbols: true }));
+// → 'fP8!cN9^hK2@xQ4?'
 
 console.log(generateToken({ type: 'hex', length: 32 }));
 // → 'b1f94e1d28a2ef3e3a6f0b8e7e9cc041'
@@ -103,6 +113,7 @@ generators/
   ├─ SECURITY.md
   ├─ generate-fake-data/
   ├─ generate-card-number/
+  ├─ generate-hash/
   ├─ generate-lorem/
   ├─ generate-password/
   └─ generate-token/
