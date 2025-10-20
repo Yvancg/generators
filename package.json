@@ -70,6 +70,21 @@
       "rule": { "type": "builtin", "name": "password", "fields": ["length", "symbols", "seed"] }
     },
     {
+      "name": "generate-prompt",
+      "description": "Generate AI prompt templates with placeholders, transforms, and seedable helpers.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["text", "code", "image"], "default": "text" },
+          "template": { "type": "string", "description": "Prompt string with placeholders" },
+          "vars": { "type": "object", "description": "Variable map for placeholders" },
+          "seed": { "type": "string", "description": "Optional deterministic seed" }
+        },
+        "required": ["template"]
+      },
+      "rule": { "type": "builtin", "name": "prompt", "fields": ["type", "template", "vars", "seed"] }
+    },
+    {
       "name": "generate-token",
       "description": "Generate a token or UUID.",
       "input_schema": {
