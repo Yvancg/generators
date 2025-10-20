@@ -18,21 +18,27 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0           # <- needed for pull --rebase
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - name: Run benchmarks
         run: |
           set -euo pipefail
           node scripts/bench.mjs
+
       - name: Commit and push results
         run: |
+          set -euo pipefail
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add bench/*.json
+          git add bench/*.json || true
           if git diff --cached --quiet; then
             echo "No changes."
-          else
-            git commit -m "chore(bench): refresh ops/s badges"
-            git push
+            exit 0
           fi
+          git pull --rebase origin main || (git rebase --abort && git pull --rebase origin main)
+          git commit -m "chore(bench): refresh ops/s badges"
+          git push
