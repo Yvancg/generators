@@ -20,6 +20,10 @@ Available modules:
   [![color gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/color.js.json)](./metrics/color.js.json)
   [![color ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/color.json)](./bench/color.json)
 
+- **generate-dataset** — Generate structured JSON, JSONL, or CSV datasets for model fine-tuning or testing.
+  [![dataset gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/dataset.js.json)](./metrics/dataset.js.json)
+  [![dataset ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/dataset.json)](./bench/dataset.json)
+
 - **generate-fake-data** — Seedable, dependency-free fake data generator.  
   [![fake gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/fake.js.json)](../metrics/fake.js.json)
   [![fake ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/fake-data.json)](../bench/fake-data.json)
@@ -57,7 +61,8 @@ You can try each generator interactively in your browser:
 
 - [Generate Avatar Test](https://yvancg.github.io/generators/generate-avatar/avatar-test.html)
 - [Generate Card Number Test](https://yvancg.github.io/generators/generate-card-number/card-test.html)
-- [Generate Color Test](https://yvancg.github.io/generators/generate-color/color-test.html)
+- [Generate Color Test](https://yvancg.github.io/generators/generate-dataset/dataset-test.html)
+- [Generate Dataset Test](https://yvancg.github.io/generators/generate-color/color-test.html)
 - [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
 - [Generate Hash Test](https://yvancg.github.io/generators/generate-hash/hash-test.html)
 - [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
@@ -90,6 +95,7 @@ Each page loads its respective module and allows interactive validation.
 import { generateAvatar } from './generate-avatar/avatar.js';
 import { generateCard } from './card.js';
 import { generatePalette } from './generate-color/color.js';
+import { generateDataset } from './generate-dataset/dataset.js';
 import { rows, user } from './generate-fake-data/fake.js';
 import { generateHash } from './generate-hash/hash.js';
 import { generateLorem } from './generate-lorem/lorem.js';
@@ -105,6 +111,9 @@ console.log(generateCard({ brand: 'visa' }));
 
 console.log(generatePalette({ base: '#3366ff', scheme: 'triadic', count: 5 }));
 // → { base: '#3366ff', scheme: 'triadic', colors: ['#3366ff','#ff33cc','#33ff66'], textOnBase: '#ffffff' }
+
+console.log(generateDataset({ count: 3, format: 'jsonl', seed: 'demo' }));
+// → '{"id":"...","text":"Lorem ipsum ..."}'
 
 console.log(rows(3, 42));
 // → array of 3 fake user objects (deterministic)
