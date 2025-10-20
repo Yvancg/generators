@@ -177,6 +177,10 @@ function idealTextColor({r,g,b}) {
   return yiq >= 128 ? '#000000' : '#ffffff';
 }
 
+function pick(arr, rnd) {
+  return arr[rnd() % arr.length];
+}
+
 // RNGs
 function cryptoRNG() {
   if (globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
