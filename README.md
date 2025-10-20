@@ -28,6 +28,11 @@ Available modules:
   [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/password.js.json)](./metrics/password.js.json)
   [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/password.json)](./bench/password.json)
 
+- **generate-prompt** — Template-based AI prompt generator for text, code, and image models.  
+  [![prompt gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/prompt.js.json)](./metrics/prompt.js.json)
+  [![prompt ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/prompt.json)](./bench/prompt.json)
+  [🔗 Live Demo](https://yvancg.github.io/generators/generate-prompt/prompt-test.html)
+
 - **generate-token** — Cryptographically secure token and UUID generator for authentication, API keys, and identifiers.  
   [![token gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/token.js.json)](../metrics/token.js.json)
   [![token ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/token.json)](../bench/token.json)
@@ -77,6 +82,7 @@ import { rows, user } from './generate-fake-data/fake.js';
 import { generateHash } from './generate-hash/hash.js';
 import { generateLorem } from './generate-lorem/lorem.js';
 import { generatePassword } from './generate-password/password.js';
+import { generatePrompt } from './generate-prompt/prompt.js';
 import { generateToken } from './generate-token/token.js';
 
 console.log(generateCard({ brand: 'visa' }));
@@ -88,7 +94,6 @@ console.log(rows(3, 42));
 console.log(user());
 // → { id: "u_123456", name: "Ava Johnson", ... }
 
-
 console.log(await generateHash('hello world', 'sha-256'));
 // → 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9'
 
@@ -97,6 +102,9 @@ console.log(generateLorem({ units: 'sentences', count: 2 }));
 
 console.log(generatePassword({ length: 16, symbols: true }));
 // → 'fP8!cN9^hK2@xQ4?'
+
+console.log(generatePrompt('text', 'Write a {tone} tweet about {topic}', { tone: 'funny', topic: 'AI startups' }));
+// → "Write a funny tweet about AI startups"
 
 console.log(generateToken({ type: 'hex', length: 32 }));
 // → 'b1f94e1d28a2ef3e3a6f0b8e7e9cc041'
@@ -107,15 +115,20 @@ console.log(generateToken({ type: 'hex', length: 32 }));
 ```
 generators/
   ├─ .github/
+  │   ├─ workflows/
   │   └─ FUNDING.yml
   ├─ LICENSE
   ├─ README.md
   ├─ SECURITY.md
-  ├─ generate-fake-data/
+  ├─ package.json
+  ├─ scripts/
+  │   └─ bench.mjs
   ├─ generate-card-number/
+  ├─ generate-fake-data/
   ├─ generate-hash/
   ├─ generate-lorem/
   ├─ generate-password/
+  ├─ generate-prompt/
   └─ generate-token/
 ```
 
