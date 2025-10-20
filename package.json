@@ -1,6 +1,122 @@
 {
-  "name": "generators",
-  "version": "1.0.0",
-  "type": "module",
-  "exports": "./src/index.js"
+  "version": "2025-10-20",
+  "tools": [
+    {
+      "name": "generate-slug",
+      "description": "Generates an SEO-friendly URL slug from any input text.",
+      "input_schema": {
+        "type": "object",
+        "properties": { "text": { "type": "string" } },
+        "required": ["text"]
+      },
+      "rule": { "type": "builtin", "name": "slugify", "field": "text" }
+    },
+    {
+      "name": "generate-uuid",
+      "description": "Generates a universally unique identifier (UUID v4).",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "rule": { "type": "builtin", "name": "uuid" }
+    },
+    {
+      "name": "generate-random-string",
+      "description": "Creates a random alphanumeric string of specified length.",
+      "input_schema": {
+        "type": "object",
+        "properties": { "length": { "type": "integer" } },
+        "required": ["length"]
+      },
+      "rule": { "type": "builtin", "name": "randomString" }
+    },
+    {
+      "name": "generate-lorem-ipsum",
+      "description": "Produces placeholder text with a specified number of sentences.",
+      "input_schema": {
+        "type": "object",
+        "properties": { "sentences": { "type": "integer" } },
+        "required": ["sentences"]
+      },
+      "rule": {
+        "type": "builtin",
+        "name": "loremIpsum",
+        "params": { "default_sentences": 3 }
+      }
+    },
+    {
+      "name": "generate-color-palette",
+      "description": "Generates a random or complementary color palette.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "base_color": { "type": "string" },
+          "count": { "type": "integer" }
+        },
+        "required": ["count"]
+      },
+      "rule": { "type": "builtin", "name": "colorPalette" }
+    },
+    {
+      "name": "generate-username",
+      "description": "Generates a random username with optional prefix or theme.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "prefix": { "type": "string" },
+          "theme": { "type": "string" }
+        },
+        "required": []
+      },
+      "rule": { "type": "builtin", "name": "usernameGenerator" }
+    },
+    {
+      "name": "generate-password",
+      "description": "Generates a strong random password with customizable complexity.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "length": { "type": "integer" },
+          "include_symbols": { "type": "boolean" }
+        },
+        "required": ["length"]
+      },
+      "rule": { "type": "builtin", "name": "passwordGenerator" }
+    },
+    {
+      "name": "generate-hash",
+      "description": "Creates a SHA-256 hash from an input string.",
+      "input_schema": {
+        "type": "object",
+        "properties": { "text": { "type": "string" } },
+        "required": ["text"]
+      },
+      "rule": { "type": "builtin", "name": "sha256", "field": "text" }
+    },
+    {
+      "name": "generate-date-range",
+      "description": "Generates an array of dates between a start and end date.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "start_date": { "type": "string" },
+          "end_date": { "type": "string" },
+          "step_days": { "type": "integer" }
+        },
+        "required": ["start_date", "end_date"]
+      },
+      "rule": { "type": "builtin", "name": "dateRange" }
+    },
+    {
+      "name": "generate-json-schema",
+      "description": "Generates a basic JSON Schema object based on provided key-value examples.",
+      "input_schema": {
+        "type": "object",
+        "properties": { "example": { "type": "object" } },
+        "required": ["example"]
+      },
+      "rule": { "type": "builtin", "name": "schemaFromExample" }
+    }
+  ]
 }
