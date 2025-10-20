@@ -1,0 +1,129 @@
+<!-- generate-avatar/avatar-test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Avatar Generator Test</title>
+  <style>
+    body{font-family:ui-monospace,monospace;background:#fafafa;color:#222;max-width:900px;margin:40px auto;padding:20px}
+    h1{font-size:1.4rem;margin-bottom:1rem}
+    label{display:block;margin-top:10px}
+    input,select{padding:6px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .row{display:flex;gap:10px;align-items:center;margin-top:16px}
+    button{padding:8px 16px;cursor:pointer;font-family:inherit}
+    .preview{margin-top:16px;display:flex;gap:20px;align-items:center}
+    .box{width:128px;height:128px;border:1px solid #ddd;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center}
+    textarea{width:100%;min-height:120px;resize:vertical}
+    .hint{color:#666;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <h1>👤 Avatar Generator Test</h1>
+
+  <div class="grid">
+    <label>
+      Pattern
+      <select id="pattern">
+        <option value="initials" selected>initials</option>
+        <option value="blocks">blocks</option>
+        <option value="circles">circles</option>
+        <option value="random">random</option>
+      </select>
+    </label>
+
+    <label>
+      Text (for initials)
+      <input id="text" placeholder="e.g. YV" value="YV"/>
+      <div class="hint">Ignored for blocks/circles unless pattern is initials.</div>
+    </label>
+
+    <label>
+      Size
+      <input id="size" type="number" min="32" max="512" value="128"/>
+    </label>
+
+    <label>
+      Seed (optional)
+      <input id="seed" placeholder="deterministic seed"/>
+    </label>
+
+    <label>
+      Background override (optional)
+      <input id="bg" placeholder="#3366ff"/>
+    </label>
+  </div>
+
+  <div class="row">
+    <button id="generate">Generate</button>
+    <button id="copy" disabled>Copy SVG</button>
+    <button id="download" disabled>Download SVG</button>
+  </div>
+
+  <div class="preview">
+    <div class="box" id="box">SVG</div>
+    <textarea id="output" placeholder="SVG output will appear here"></textarea>
+  </div>
+
+  <script type="module">
+    import { generateAvatar } from './avatar.js';
+
+    const $ = id => document.getElementById(id);
+    const box = $('box');
+    const out = $('output');
+    const copyBtn = $('copy');
+    const dlBtn = $('download');
+
+    $('generate').onclick = () => {
+      try {
+        const svg = generateAvatar({
+          pattern: $('pattern').value,
+          text: $('text').value || 'AA',
+          size: parseInt($('size').value, 10) || 128,
+          seed: $('seed').value || null,
+          background: $('bg').value.trim() || null
+        });
+        out.value = svg;
+        box.innerHTML = svg;
+        copyBtn.disabled = false;
+        dlBtn.disabled = false;
+      } catch (e) {
+        console.error(e);
+        out.value = 'Error: ' + (e?.message || e);
+        box.textContent = 'Error';
+        copyBtn.disabled = true;
+        dlBtn.disabled = true;
+      }
+    };
+
+    $('copy').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(out.value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(()=> (copyBtn.textContent='Copy SVG'), 1500);
+      } catch (e) {
+        console.error(e);
+        copyBtn.textContent = 'Error';
+      }
+    };
+
+    $('download').onclick = () => {
+      try {
+        const blob = new Blob([out.value], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'avatar.svg';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        console.error(e);
+        dlBtn.textContent = 'Error';
+      }
+    };
+  </script>
+</body>
+</html>
