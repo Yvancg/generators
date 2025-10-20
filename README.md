@@ -8,6 +8,10 @@ A collection of minimal, dependency-free generators for developers, testers, and
 
 Available modules:
 
+- **generate-avatar** — SVG avatar and placeholder generator with initials or geometric patterns  
+  [![avatar gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/avatar.js.json)](./metrics/avatar.js.json)
+  [![avatar ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/avatar.json)](./bench/avatar.json)
+
 - **generate-card-number** — Valid Luhn-compliant card number generator with realistic expiry and CVC for testing.  
   [![card gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/card.js.json)](./metrics/card.js.json)
   [![card ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/card.json)](./bench/card.json)
@@ -51,6 +55,7 @@ Each module has its own `README.md`, tests, and can be imported individually.
 
 You can try each generator interactively in your browser:
 
+- [Generate Avatar Test](https://yvancg.github.io/generators/generate-avatar/avatar-test.html)
 - [Generate Card Number Test](https://yvancg.github.io/generators/generate-card-number/card-test.html)
 - [Generate Color Test](https://yvancg.github.io/generators/generate-color/color-test.html)
 - [Generate Fake Data Test](https://yvancg.github.io/generators/generate-fake-data/fake-test.html)
@@ -82,6 +87,7 @@ Each page loads its respective module and allows interactive validation.
 ## Example Usage
 
 ```js
+import { generateAvatar } from './generate-avatar/avatar.js';
 import { generateCard } from './card.js';
 import { generatePalette } from './generate-color/color.js';
 import { rows, user } from './generate-fake-data/fake.js';
@@ -90,6 +96,9 @@ import { generateLorem } from './generate-lorem/lorem.js';
 import { generatePassword } from './generate-password/password.js';
 import { generatePrompt } from './generate-prompt/prompt.js';
 import { generateToken } from './generate-token/token.js';
+
+console.log(generateAvatar({ text: 'AI', size: 128, seed: 'demo' }));
+// → '<svg width="128" height="128" ...>…</svg>'
 
 console.log(generateCard({ brand: 'visa' }));
 // → { number: '4111111111111111', brand: 'visa', expiry: '08/28', cvc: '123' }
@@ -132,6 +141,7 @@ generators/
   ├─ package.json
   ├─ scripts/
   │   └─ bench.mjs
+  ├─ generate-avatar/
   ├─ generate-card-number/
   ├─ generate-color/
   ├─ generate-fake-data/
