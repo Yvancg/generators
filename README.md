@@ -31,7 +31,6 @@ Available modules:
 - **generate-prompt** — Template-based AI prompt generator for text, code, and image models.  
   [![prompt gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/prompt.js.json)](./metrics/prompt.js.json)
   [![prompt ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/prompt.json)](./bench/prompt.json)
-  [🔗 Live Demo](https://yvancg.github.io/generators/generate-prompt/prompt-test.html)
 
 - **generate-token** — Cryptographically secure token and UUID generator for authentication, API keys, and identifiers.  
   [![token gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/token.js.json)](../metrics/token.js.json)
@@ -53,6 +52,7 @@ You can try each generator interactively in your browser:
 - [Generate Hash Test](https://yvancg.github.io/generators/generate-hash/hash-test.html)
 - [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
 - [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
+- [Generate Prompt Test](https://yvancg.github.io/generators/generate-prompt/prompt-test.html)
 - [Generate Token Test](https://yvancg.github.io/generators/generate-token/token-test.html)
 
 Each page loads its respective module and allows interactive validation.
