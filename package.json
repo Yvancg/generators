@@ -2,6 +2,22 @@
   "version": "2025-10-20",
   "tools": [
     {
+      "name": "generate-avatar",
+      "description": "Generate SVG placeholder avatars or patterns (deterministic with seed).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "description": "Initials or label to render." },
+          "pattern": { "type": "string", "enum": ["initials", "blocks", "circles", "random"], "default": "initials" },
+          "size": { "type": "integer", "minimum": 32, "maximum": 512, "default": 128 },
+          "seed": { "type": ["string", "null"], "description": "Optional deterministic seed." },
+          "background": { "type": "string", "description": "Base color override (#hex, rgb, hsl)." }
+        },
+        "required": []
+      },
+      "rule": { "type": "builtin", "name": "avatar", "fields": ["text", "pattern", "size", "seed", "background"] }
+    },
+    {
       "name": "generate-card-number",
       "description": "Generate a Luhn-valid test card with brand, expiry, and CVC.",
       "input_schema": {
