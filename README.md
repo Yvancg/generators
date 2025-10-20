@@ -83,6 +83,7 @@ Each page loads its respective module and allows interactive validation.
 
 ```js
 import { generateCard } from './card.js';
+import { generatePalette } from './generate-color/color.js';
 import { rows, user } from './generate-fake-data/fake.js';
 import { generateHash } from './generate-hash/hash.js';
 import { generateLorem } from './generate-lorem/lorem.js';
@@ -92,6 +93,9 @@ import { generateToken } from './generate-token/token.js';
 
 console.log(generateCard({ brand: 'visa' }));
 // → { number: '4111111111111111', brand: 'visa', expiry: '08/28', cvc: '123' }
+
+console.log(generatePalette({ base: '#3366ff', scheme: 'triadic', count: 5 }));
+// → { base: '#3366ff', scheme: 'triadic', colors: ['#3366ff','#ff33cc','#33ff66'], textOnBase: '#ffffff' }
 
 console.log(rows(3, 42));
 // → array of 3 fake user objects (deterministic)
