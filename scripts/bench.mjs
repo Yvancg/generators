@@ -2,6 +2,7 @@ import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 
 // --- Import targets explicitly to avoid discovery misses ---
+import { generateAvatar }    from '../generate-avatar/avatar.js';
 import { generateCard }      from '../generate-card-number/card.js';
 import { generatePalette }   from '../generate-color/color.js';
 import { rows }              from '../generate-fake-data/fake.js';
@@ -22,6 +23,7 @@ async function bench(fn, iters) {
 }
 
 const targets = [
+  { name: 'avatar',    fn: () => generateAvatar({ text: 'AI', size: 64, seed: 'bench' }), iters: 10_000 },
   { name: 'card',      fn: () => generateCard({ brand: 'visa', seed: 'bench' }), iters: 100_000 },
   { name: 'color',     fn: () => generatePalette({ scheme: 'triadic', count: 6 }), iters: 50_000 },
   { name: 'fake-data', fn: () => rows(50, 1234), iters: 600 },
