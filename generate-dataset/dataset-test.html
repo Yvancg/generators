@@ -1,0 +1,137 @@
+<!-- generate-dataset/dataset-test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dataset Generator Test</title>
+  <style>
+    body{font-family:ui-monospace,monospace;background:#fafafa;color:#222;max-width:1000px;margin:40px auto;padding:20px}
+    h1{font-size:1.4rem;margin-bottom:1rem}
+    label{display:block;margin-top:10px}
+    input,select,textarea{padding:6px}
+    textarea{width:100%;min-height:200px;resize:vertical}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .row{display:flex;gap:10px;align-items:center;margin-top:16px}
+    button{padding:8px 16px;cursor:pointer;font-family:inherit}
+    .hint{color:#666;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <h1>📄 Dataset Generator Test</h1>
+
+  <div class="grid">
+    <label>
+      Count
+      <input id="count" type="number" min="1" max="100000" value="10"/>
+    </label>
+
+    <label>
+      Format
+      <select id="format">
+        <option value="jsonl" selected>jsonl</option>
+        <option value="json">json</option>
+        <option value="csv">csv</option>
+      </select>
+    </label>
+
+    <label>
+      Seed (optional)
+      <input id="seed" placeholder="deterministic seed"/>
+    </label>
+
+    <label>
+      CSV delimiter
+      <input id="delim" value="," />
+      <div class="hint">Used only for CSV</div>
+    </label>
+
+    <label style="grid-column:1 / -1">
+      Schema (JSON)
+      <textarea id="schema" spellcheck="false"></textarea>
+      <div class="hint">
+        Example: {"id":{"type":"uuid"},"text":{"type":"sentence","min":8,"max":16},"label":{"type":"category","values":["pos","neg"]},"score":{"type":"float","min":0,"max":1,"decimals":3}}
+      </div>
+    </label>
+  </div>
+
+  <div class="row">
+    <button id="preset">Use default schema</button>
+    <button id="generate">Generate</button>
+    <button id="copy" disabled>Copy</button>
+    <button id="download" disabled>Download</button>
+  </div>
+
+  <textarea id="output" placeholder="Generated data will appear here">Click "Generate"</textarea>
+
+  <script type="module">
+    import { generateDataset } from './dataset.js';
+    const $ = id => document.getElementById(id);
+    const out = $('output'); const copyBtn = $('copy'); const dlBtn = $('download');
+
+    $('preset').onclick = () => {
+      const ex = {
+        id:{type:'uuid'},
+        input:{type:'sentence',min:8,max:16},
+        output:{type:'paragraph',sentences:2,min:8,max:16},
+        label:{type:'category',values:['A','B','C']},
+        score:{type:'float',min:0,max:1,decimals:3},
+        created:{type:'date',start:'2024-01-01',end:'2025-01-01',iso:true}
+      };
+      $('schema').value = JSON.stringify(ex, null, 2);
+    };
+
+    function parseSchema() {
+      const raw = $('schema').value.trim();
+      if (!raw) return null;
+      try { return JSON.parse(raw); }
+      catch { throw new Error('Schema must be valid JSON'); }
+    }
+
+    $('generate').onclick = () => {
+      try {
+        const text = generateDataset({
+          count: Math.max(1, parseInt($('count').value,10) || 1),
+          schema: parseSchema() || undefined,
+          format: $('format').value,
+          seed: $('seed').value || null,
+          delimiter: $('delim').value || ',',
+          header: true
+        });
+        out.value = text;
+        copyBtn.disabled = false;
+        dlBtn.disabled = false;
+      } catch (e) {
+        console.error(e);
+        out.value = 'Error: ' + (e?.message || e);
+        copyBtn.disabled = true;
+        dlBtn.disabled = true;
+      }
+    };
+
+    $('copy').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(out.value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy'), 1500);
+      } catch {
+        copyBtn.textContent = 'Error';
+      }
+    };
+
+    $('download').onclick = () => {
+      const format = $('format').value;
+      const ext = format === 'jsonl' ? 'jsonl' : format;
+      const blob = new Blob([out.value], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dataset.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    };
+  </script>
+</body>
+</html>
