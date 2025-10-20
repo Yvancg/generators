@@ -3,41 +3,40 @@
 [![hash gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/hash.js.json)](../metrics/hash.js.json)
 [![hash ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/hash.json)](../bench/hash.json)
 
-**generate-hash** creates seedable, dependency-free fake data for tests, demos, and AI dataset prototyping.
+**generate-hash** creates cryptographic and legacy hashes (SHA-256, MD5) for text input.  
+Lightweight, dependency-free, and browser-compatible.
 
 ---
 
 ## 🚀 Why
 
-Most Lorem Ipsum tools depend on large libraries or unsafe random generators.  
-`generate-hash` is compact, deterministic, and dependency-free — ideal for reproducible content, AI dataset stubs, or testing pipelines.
+Many hash utilities rely on large crypto packages or Node-only APIs.  
+`generate-hash` uses native WebCrypto when available and includes a minimal MD5 fallback — ideal for secure client-side hashing, data integrity checks, or reproducible signatures.
 
 ---
 
 ## 🌟 Features
 
-- ✅ Deterministic output via `seed`  
-- ✅ Generates words, sentences, or paragraphs  
-- ✅ Adjustable word and sentence ranges  
-- ✅ Capitalization and punctuation options  
-- ✅ Works in Node.js, Deno, Bun, or browser  
-- ✅ Zero dependencies — pure ESM  
+- ✅ SHA-256 (via SubtleCrypto) and MD5 (pure JS)  
+- ✅ Browser, Node.js, Deno, Bun support  
+- ✅ Minimal, dependency-free ESM  
+- ✅ Deterministic, repeatable output  
+- ✅ UTF-8 input handling  
 
 ---
 
 ## 📦 Usage
 
 ```js
-import { generateLorem } from './lorem.js';
+import { generateHash } from './hash.js';
 
-// Generate 10 words
-console.log(generateLorem({ units: 'words', count: 10 }));
+// SHA-256 hash
+console.log(await generateHash('hello world', 'sha-256'));
+// → 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9'
 
-// Generate 2 sentences
-console.log(generateLorem({ units: 'sentences', count: 2 }));
-
-// Generate 3 paragraphs with a seed
-console.log(generateLorem({ units: 'paragraphs', count: 3, seed: 'demo', separator: '\n\n' }));
+// MD5 hash
+console.log(await generateHash('hello world', 'md5'));
+// → '5eb63bbbe01eeed093cb22bb8f5acdc3'
 ```
 
 ---
@@ -45,35 +44,17 @@ console.log(generateLorem({ units: 'paragraphs', count: 3, seed: 'demo', separat
 ## 🧠 API
 
 ```ts
-generateLorem(options?: LoremOptions): string
-
-type LoremOptions = {
-  units?: 'words' | 'sentences' | 'paragraphs';
-  count?: number;
-  seed?: string | null;
-  dictionary?: string[];
-  wordsPerSentence?: [number, number];
-  sentencesPerParagraph?: [number, number];
-  capitalize?: boolean;
-  endWithPeriod?: boolean;
-  separator?: string;
-};
+generateHash(input: string, algorithm?: 'sha-256' | 'md5'): Promise<string>
 ```
-Returns a string of generated Lorem Ipsum text.
+Returns a lowercase hex-encoded hash string.
 
 ---
 
 ## Example Output
 
 ```bash
-Lorem ipsum dolor sit amet consectetur adipiscing elit. 
-Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-```
-With a seed:
-```bash
-console.log(generateLorem({ units: 'sentences', count: 2, seed: 'demo' }));
-# Lorem dolore pariatur anim exercitation officia.
-# Fugiat id consequat tempor in voluptate.
+SHA-256 → b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+MD5      → 5eb63bbbe01eeed093cb22bb8f5acdc3
 ```
 
 
@@ -92,16 +73,16 @@ No `npm install` or build step required.
 
 Run quick test in Node:
 ```bash
-node --input-type=module -e "import('./hash.js').then(m=>console.log(m.generateLorem({units:'sentences',count:2})))"
+node --input-type=module -e "import('./hash.js').then(async m=>console.log(await m.generateHash('test','sha-256')))"
 ```
 
 ---
 
 ## 🔒 Notes
 
-•	Output is synthetic and reproducible — no external data.
-•	All randomness uses crypto.getRandomValues when available.
-•	Use the seed option for deterministic test results.
+•	Uses WebCrypto crypto.subtle.digest when available.
+• MD5 is not secure — use only for checksums or legacy compatibility.
+• SHA-256 is cryptographically safe for most integrity uses.
   
 ---
 
