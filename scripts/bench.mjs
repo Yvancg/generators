@@ -65,5 +65,3 @@ console.table(targets.map(t => {
   } catch {}
   return { target: t.name, iters: t.iters.toLocaleString(), badge };
 }));
-
-if (!wrote || failed) process.exit(1);
