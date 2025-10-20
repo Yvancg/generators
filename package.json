@@ -15,6 +15,22 @@
       "rule": { "type": "builtin", "name": "genCard", "fields": ["brand", "seed"] }
     },
     {
+      "name": "generate-color",
+      "description": "Generate deterministic or random color palettes (HEX, RGB, HSL).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "base": { "type": "string", "description": "Base color (#hex, rgb(), or hsl())." },
+          "scheme": { "type": "string", "enum": ["triadic", "complementary", "tetradic", "analogous", "monochrome", "random"], "default": "triadic" },
+          "count": { "type": "integer", "minimum": 1, "maximum": 12, "default": 5 },
+          "format": { "type": "string", "enum": ["hex", "rgb", "hsl"], "default": "hex" },
+          "seed": { "type": ["string", "null"], "description": "Optional deterministic seed." }
+        },
+        "required": []
+      },
+      "rule": { "type": "builtin", "name": "color", "fields": ["base", "scheme", "count", "format", "seed"] }
+    },
+    {
       "name": "generate-fake-data",
       "description": "Generate deterministic fake data rows or a single entity.",
       "input_schema": {
