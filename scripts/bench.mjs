@@ -3,11 +3,12 @@ import { performance } from 'node:perf_hooks';
 
 // --- Import targets explicitly to avoid discovery misses ---
 import { generateCard }      from '../generate-card-number/card.js';
+import { generatePalette }   from '../generate-color/color.js';
 import { rows }              from '../generate-fake-data/fake.js';
-import { generateHash } 			from '../generate-hash/hash.js';
+import { generateHash } 		 from '../generate-hash/hash.js';
 import { generateLorem }     from '../generate-lorem/lorem.js';
 import { generatePassword }  from '../generate-password/password.js';
-import { generatePrompt } from '../generate-prompt/prompt.js';
+import { generatePrompt }    from '../generate-prompt/prompt.js';
 import { generateToken }     from '../generate-token/token.js';
 
 mkdirSync('bench', { recursive: true });
@@ -22,6 +23,7 @@ async function bench(fn, iters) {
 
 const targets = [
   { name: 'card',      fn: () => generateCard({ brand: 'visa', seed: 'bench' }), iters: 100_000 },
+  { name: 'color',     fn: () => generatePalette({ scheme: 'triadic', count: 6 }), iters: 50_000 },
   { name: 'fake-data', fn: () => rows(50, 1234), iters: 600 },
   { name: 'hash',      fn: () => generateHash('benchmark', 'sha-256'), iters: 10_000 },
   { name: 'lorem',     fn: () => generateLorem({ units: 'sentences', count: 3 }), iters: 50_000 },
