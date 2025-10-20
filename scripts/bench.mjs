@@ -1,7 +1,13 @@
 import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 
-// imports unchanged...
+// --- Import targets explicitly to avoid discovery misses ---
+import { generateCard }      from '../generate-card-number/card.js';
+import { rows }              from '../generate-fake-data/fake.js';
+import { generateHash } 			from '../generate-hash/hash.js';
+import { generateLorem }     from '../generate-lorem/lorem.js';
+import { generatePassword }  from '../generate-password/password.js';
+import { generateToken }     from '../generate-token/token.js';
 
 mkdirSync('bench', { recursive: true });
 
