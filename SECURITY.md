@@ -46,6 +46,7 @@ If you discover a security issue or suspect a potential vulnerability:
 This policy applies to all modules in the **Validators** repository:
 - `generate-fake-data`
 - `generate-lorem`
+- `generate-hash`
 - `generate-password`
 - `generate-token`
 -  etc
