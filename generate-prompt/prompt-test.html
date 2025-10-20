@@ -1,0 +1,122 @@
+<!-- generate-prompt/prompt-test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prompt Generator Test</title>
+  <style>
+    body{font-family:ui-monospace,monospace;background:#fafafa;color:#222;max-width:900px;margin:40px auto;padding:20px}
+    h1{font-size:1.4rem;margin-bottom:1rem}
+    label{display:block;margin-top:10px}
+    select,textarea,input[type="text"]{padding:6px}
+    textarea{width:100%;min-height:120px;resize:vertical}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .row{display:flex;gap:10px;align-items:center;margin-top:16px}
+    button{padding:8px 16px;cursor:pointer;font-family:inherit}
+    pre{background:#eee;padding:12px;border-radius:6px;white-space:pre-wrap;word-break:break-word;margin-top:16px;min-height:100px}
+    .hint{color:#666;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <h1>🧩 Prompt Generator Test</h1>
+
+  <div class="grid">
+    <label>
+      Type
+      <select id="type">
+        <option value="text" selected>text</option>
+        <option value="code">code</option>
+        <option value="image">image</option>
+      </select>
+    </label>
+
+    <label>
+      Seed (optional)
+      <input id="seed" placeholder="deterministic seed"/>
+      <div class="hint">Used for helpers like {{RAND_INT:min,max}}</div>
+    </label>
+
+    <label>
+      Template
+      <textarea id="template">Write a {tone} tweet about {topic}. Audience: {audience}. {{NOW_ISO}}</textarea>
+      <div class="hint">Use {placeholder} and optional transform, e.g. {topic|upper}. Helpers: {{NOW_ISO}}, {{RAND_INT:1,10}}</div>
+    </label>
+
+    <label>
+      Vars (JSON)
+      <textarea id="vars">{"tone":"funny","topic":"AI startups","audience":"founders"}</textarea>
+      <div class="hint">Plain JSON object. Nested keys allowed, e.g. {"user":{"name":"Ada"}}</div>
+    </label>
+  </div>
+
+  <div class="row">
+    <button id="preset-text">Preset: Text</button>
+    <button id="preset-code">Preset: Code</button>
+    <button id="preset-image">Preset: Image</button>
+  </div>
+
+  <div class="row">
+    <button id="generate">Generate</button>
+    <button id="copy" disabled>Copy</button>
+  </div>
+
+  <pre id="output">Click "Generate"</pre>
+
+  <script type="module">
+    import { generatePrompt, PromptPresets } from './prompt.js?v=1';
+    const $ = id => document.getElementById(id);
+    const out = $('output');
+    const copyBtn = $('copy');
+
+    function parseJSON(text) {
+      try { return JSON.parse(text || '{}'); }
+      catch { throw new Error('Vars must be valid JSON'); }
+    }
+
+    $('preset-text').onclick = () => {
+      $('type').value = 'text';
+      $('template').value = PromptPresets.text;
+      $('vars').value = JSON.stringify({ tone:'Serious', length:'Short', topic:'edge caching', audience:'SRE teams' }, null, 2);
+    };
+    $('preset-code').onclick = () => {
+      $('type').value = 'code';
+      $('template').value = PromptPresets.code;
+      $('vars').value = JSON.stringify({ language:'TypeScript', instruction:'validates email addresses', constraints:'no regex backtracking' }, null, 2);
+    };
+    $('preset-image').onclick = () => {
+      $('type').value = 'image';
+      $('template').value = PromptPresets.image;
+      $('vars').value = JSON.stringify({ subject:'ocean cliff lighthouse', style:'studio ghibli', lighting:'golden hour', palette:'pastel' }, null, 2);
+    };
+
+    $('generate').onclick = () => {
+      try {
+        const p = generatePrompt(
+          $('type').value,
+          $('template').value,
+          parseJSON($('vars').value),
+          { seed: $('seed').value || null }
+        );
+        out.textContent = p;
+        copyBtn.disabled = false;
+      } catch (e) {
+        console.error(e);
+        out.textContent = 'Error: ' + (e?.message || e);
+        copyBtn.disabled = true;
+      }
+    };
+
+    copyBtn.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(out.textContent);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(()=> (copyBtn.textContent='Copy'), 1500);
+      } catch (e) {
+        console.error(e);
+        copyBtn.textContent = 'Error';
+      }
+    };
+  </script>
+</body>
+</html>
