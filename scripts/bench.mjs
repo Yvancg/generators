@@ -1,3 +1,4 @@
+// scripts/bench.mjs
 import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 
@@ -7,7 +8,7 @@ import { generateCard }      from '../generate-card-number/card.js';
 import { generatePalette }   from '../generate-color/color.js';
 import { generateDataset }   from '../generate-dataset/dataset.js';
 import { rows }              from '../generate-fake-data/fake.js';
-import { generateHash } 		 from '../generate-hash/hash.js';
+import { generateHash }      from '../generate-hash/hash.js';
 import { generateLorem }     from '../generate-lorem/lorem.js';
 import { generatePassword }  from '../generate-password/password.js';
 import { generatePrompt }    from '../generate-prompt/prompt.js';
@@ -36,24 +37,35 @@ const targets = [
   { name: 'token',     fn: () => generateToken({ type: 'hex', length: 32 }), iters: 100_000 },
 ];
 
+// 1) Pre-write error placeholders so badges always exist
+for (const t of targets) {
+  writeFileSync(`bench/${t.name}.json`, JSON.stringify({
+    schemaVersion: 1, label: 'speed', message: 'error', color: 'red'
+  }, null, 2));
+}
+
+// 2) Log targets and each run
+console.log('targets:', targets.map(t => t.name).join(', '));
+
 let wrote = 0;
 let failed = 0;
 
 for (const t of targets) {
+  console.log('→ running', t.name);
   try {
-    const ops = await bench(t.fn, t.iters); // await async bench
-    const color = ops > 1_000_000 ? 'brightgreen'
-              :  ops >   300_000 ? 'green'
-              :  ops >   100_000 ? 'blue'
-              :  'lightgrey';
+    const ops = await bench(t.fn, t.iters);
+    const color =
+      ops > 1_000_000 ? 'brightgreen' :
+      ops >   300_000 ? 'green'       :
+      ops >   100_000 ? 'blue'        :
+                         'lightgrey';
     const json = { schemaVersion: 1, label: 'speed', message: `${ops.toLocaleString()} ops/s`, color };
     writeFileSync(`bench/${t.name}.json`, JSON.stringify(json, null, 2));
     wrote++;
   } catch (e) {
     failed++;
-    const json = { schemaVersion: 1, label: 'speed', message: 'error', color: 'red' };
-    writeFileSync(`bench/${t.name}.json`, JSON.stringify(json, null, 2));
     console.error(`[bench:${t.name}]`, e?.stack || e);
+    // placeholder remains as "error"
   }
 }
 
@@ -65,3 +77,5 @@ console.table(targets.map(t => {
   } catch {}
   return { target: t.name, iters: t.iters.toLocaleString(), badge };
 }));
+
+// Do not exit non-zero; let workflow commit badges
