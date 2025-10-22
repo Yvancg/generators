@@ -6,7 +6,7 @@ import { performance } from 'node:perf_hooks';
 import { generateAvatar }    from '../generate-avatar/avatar.js';
 import { generateCard }      from '../generate-card-number/card.js';
 import { generatePalette }   from '../generate-color/color.js';
-
+import { generateDataset }   from '../generate-dataset/dataset.js';
 import { rows }              from '../generate-fake-data/fake.js';
 import { generateHash }      from '../generate-hash/hash.js';
 import { generateLorem }     from '../generate-lorem/lorem.js';
@@ -29,15 +29,7 @@ const targets = [
   { name: 'avatar',    fn: () => generateAvatar({ text: 'AI', pattern: 'blocks', size: 64, seed: 'bench' }), iters: 10_000 },
   { name: 'card',      fn: () => generateCard({ brand: 'visa', seed: 'bench' }), iters: 100_000 },
   { name: 'color',     fn: () => generatePalette({ scheme: 'triadic', count: 6 }), iters: 50_000 },
-  { name: 'dataset',   fn: async () => {
-       try {
-         const generateDataset = await loadDataset();
-         return generateDataset({ count: 50, format: 'jsonl', seed: 'bench' });
-       } catch (e) {
-         console.error('[dataset]', e?.stack || e);
-         return '';
-       }
-  }, iters: 500 },  
+  { name: 'dataset',   fn: () => generateDataset({ count: 50, format: 'jsonl', seed: 'bench' }), iters: 500 }, 
   { name: 'fake-data', fn: () => rows(50, 1234), iters: 600 },
   { name: 'hash',      fn: () => generateHash('benchmark', 'sha-256'), iters: 10_000 },
   { name: 'lorem',     fn: () => generateLorem({ units: 'sentences', count: 3 }), iters: 50_000 },
