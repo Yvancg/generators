@@ -166,6 +166,7 @@ generators/
   ├─ generate-hash/
   ├─ generate-lorem/
   ├─ generate-password/
+  ├─ generate-phone-number/
   ├─ generate-prompt/
   └─ generate-token/
 ```
