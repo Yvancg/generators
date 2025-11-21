@@ -1,0 +1,197 @@
+<!-- generate-ssn/ssn-test.html -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SSN Generator Test</title>
+<style>
+  :root {
+    --bg:#f9fafb;
+    --fg:#111827;
+    --card:#ffffff;
+    --border:#e5e7eb;
+    --muted:#6b7280;
+    --accent:#2563eb;
+  }
+  * { box-sizing:border-box; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  body {
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    color:var(--fg);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .card {
+    width:100%;
+    max-width:720px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px 20px 24px;
+    box-shadow:0 10px 30px rgba(15,23,42,0.06);
+  }
+  h1 {
+    margin:0 0 4px;
+    font-size:1.2rem;
+    font-weight:600;
+  }
+  .subtitle {
+    margin:0 0 16px;
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+  label {
+    display:block;
+    font-size:0.8rem;
+    margin-top:10px;
+    margin-bottom:4px;
+    color:var(--muted);
+  }
+  input[type="number"],
+  input[type="text"] {
+    width:100%;
+    padding:6px 8px;
+    border-radius:6px;
+    border:1px solid var(--border);
+    font-size:0.85rem;
+    background:#f9fafb;
+  }
+  .row {
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:12px;
+  }
+  .row > div {
+    flex:1 1 120px;
+  }
+  .checkbox-row {
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:8px;
+    font-size:0.8rem;
+    color:var(--muted);
+  }
+  .checkbox-row label {
+    display:flex;
+    align-items:center;
+    gap:4px;
+    margin:0;
+  }
+  button {
+    padding:8px 14px;
+    border-radius:999px;
+    border:1px solid transparent;
+    background:var(--accent);
+    color:#fff;
+    font-size:0.85rem;
+    cursor:pointer;
+  }
+  button.secondary {
+    background:#fff;
+    color:var(--fg);
+    border-color:var(--border);
+  }
+  button:disabled {
+    opacity:0.4;
+    cursor:default;
+  }
+  pre {
+    margin-top:16px;
+    background:#0b1120;
+    color:#e5e7eb;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:0.8rem;
+    overflow:auto;
+    max-height:260px;
+    white-space:pre-wrap;
+    word-break:break-all;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🔢 SSN Generator Test</h1>
+  <p class="subtitle">Synthetic, structurally valid US SSNs for test fixtures and demos.</p>
+
+  <div class="row">
+    <div>
+      <label for="count">Count</label>
+      <input id="count" type="number" min="1" value="3">
+    </div>
+    <div>
+      <label for="seed">Seed (optional)</label>
+      <input id="seed" type="text" placeholder="deterministic seed">
+    </div>
+  </div>
+
+  <div class="checkbox-row">
+    <label>
+      <input id="formatted" type="checkbox" checked>
+      Formatted (123-45-6789)
+    </label>
+    <label>
+      <input id="valid" type="checkbox" checked>
+      Enforce basic SSA rules
+    </label>
+  </div>
+
+  <div class="row" style="margin-top:14px">
+    <button id="generate">Generate</button>
+    <button id="copy" class="secondary" disabled>Copy</button>
+  </div>
+
+  <pre id="output">Click "Generate" to create test SSNs.</pre>
+</div>
+
+<script type="module">
+  import { generateSSN } from './ssn.js';
+  const $ = id => document.getElementById(id);
+
+  const out = $('output');
+  const copyBtn = $('copy');
+
+  $('generate').onclick = () => {
+    const count = parseInt($('count').value, 10) || 1;
+    const seed  = $('seed').value || null;
+    const formatted = $('formatted').checked;
+    const valid = $('valid').checked;
+
+    try {
+      const res = generateSSN({ count, seed, formatted, valid });
+      const list = Array.isArray(res) ? res : [res];
+      const text = list.join('\n');
+      out.textContent = text;
+      copyBtn.disabled = false;
+      copyBtn.dataset.payload = text;
+    } catch (e) {
+      out.textContent = 'Error: ' + (e.message || e);
+      copyBtn.disabled = true;
+      delete copyBtn.dataset.payload;
+    }
+  };
+
+  copyBtn.onclick = async () => {
+    try {
+      const payload = copyBtn.dataset.payload || '';
+      if (!payload) return;
+      await navigator.clipboard.writeText(payload);
+      const old = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => copyBtn.textContent = old, 1200);
+    } catch {
+      copyBtn.textContent = 'Error';
+      setTimeout(() => copyBtn.textContent = 'Copy', 1200);
+    }
+  };
+</script>
+
+</body>
+</html>
