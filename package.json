@@ -134,6 +134,41 @@
       "rule": { "type": "builtin", "name": "password", "fields": ["length", "symbols", "seed"] }
     },
     {
+      "name": "generate-phone-number",
+      "description": "Generate US phone numbers with optional state, city, count, and seed.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": ["string", "null"],
+            "enum": ["CA", "NY", "TX", "FL", null],
+            "description": "Optional US state code. If provided, restricts area codes to that state."
+          },
+          "city": {
+            "type": ["string", "null"],
+            "enum": ["Los Angeles", "San Francisco", "New York", "Houston", "Miami", null],
+            "description": "Optional city name. If provided and known, overrides state-based selection."
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1,
+            "description": "Number of phone numbers to generate."
+          },
+          "seed": {
+            "type": ["string", "null"],
+            "description": "Optional deterministic seed for reproducible output."
+          }
+        },
+        "required": []
+      },
+      "rule": {
+        "type": "builtin",
+        "name": "phoneNumber",
+        "fields": ["state", "city", "count", "seed"]
+      }
+    },
+    {
       "name": "generate-prompt",
       "description": "Generate AI prompt templates with placeholders, transforms, and seedable helpers.",
       "input_schema": {
