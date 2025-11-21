@@ -48,6 +48,10 @@ Available modules:
   [![prompt gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/prompt.js.json)](./metrics/prompt.js.json)
   [![prompt ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/prompt.json)](./bench/prompt.json)
 
+- **generate-ssn** — Synthetic US Social Security number generator for fixtures and test data only.  
+  [![ssn gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/ssn.js.json)](./metrics/ssn.js.json)
+  [![ssn ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/ssn.json)](./bench/ssn.json)
+
 - **generate-token** — Cryptographically secure token and UUID generator for authentication, API keys, and identifiers.  
   [![token gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/token.js.json)](../metrics/token.js.json)
   [![token ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/token.json)](../bench/token.json)
@@ -73,6 +77,7 @@ You can try each generator interactively in your browser:
 - [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
 - [Generate Phone Number Test](https://yvancg.github.io/generators/generate-phone-number/phone-test.html)
 - [Generate Prompt Test](https://yvancg.github.io/generators/generate-prompt/prompt-test.html)
+- [Generate SSN Test](https://yvancg.github.io/generators/generate-ssn/ssn-test.html)
 - [Generate Token Test](https://yvancg.github.io/generators/generate-token/token-test.html)
 
 Each page loads its respective module and allows interactive validation.
@@ -107,6 +112,7 @@ import { generateLorem } from './generate-lorem/lorem.js';
 import { generatePassword } from './generate-password/password.js';
 import { generatePhoneNumber } from './generate-phone-number/phone.js';
 import { generatePrompt } from './generate-prompt/prompt.js';
+import { generateSSN } from './generate-ssn/ssn.js';
 import { generateToken } from './generate-token/token.js';
 
 console.log(generateAvatar({ text: 'AI', size: 128, seed: 'demo' }));
@@ -142,6 +148,9 @@ console.log(generatePhoneNumber({ state: 'CA', count: 3 }));
 console.log(generatePrompt('text', 'Write a {tone} tweet about {topic}', { tone: 'funny', topic: 'AI startups' }));
 // → "Write a funny tweet about AI startups"
 
+console.log(generateSSN({ count: 3, seed: 'demo' }));
+// → ['123-45-6789', '...', '...']
+
 console.log(generateToken({ type: 'hex', length: 32 }));
 // → 'b1f94e1d28a2ef3e3a6f0b8e7e9cc041'
 ```
@@ -168,6 +177,7 @@ generators/
   ├─ generate-password/
   ├─ generate-phone-number/
   ├─ generate-prompt/
+  ├─ generate-ssn/
   └─ generate-token/
 ```
 
