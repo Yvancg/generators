@@ -184,6 +184,21 @@
       "rule": { "type": "builtin", "name": "prompt", "fields": ["type", "template", "vars", "seed"] }
     },
     {
+      "name": "generate-ssn",
+      "description": "Generate synthetic US Social Security numbers for testing.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "count":     { "type": "integer", "minimum": 1, "default": 1 },
+          "formatted": { "type": "boolean", "default": true },
+          "valid":     { "type": "boolean", "default": true },
+          "seed":      { "type": "string" }
+        },
+        "required": []
+      },
+      "rule": { "type": "builtin", "name": "ssn", "fields": ["count", "formatted", "valid", "seed"] }
+    },
+    {
       "name": "generate-token",
       "description": "Generate a token or UUID.",
       "input_schema": {
