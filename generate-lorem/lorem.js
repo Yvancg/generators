@@ -22,44 +22,57 @@ export function generateLorem(options = {}) {
     throw new Error('count must be a positive integer');
   }
 
-  const rng = seed ? seededRNG(seed) : cryptoRNG();
+  const rng = seed ? seededRNG(String(seed)) : cryptoRNG();
+  const dict = dictionary;
+  const dictLen = dict.length;
+  const [wpsMin, wpsMax] = wordsPerSentence;
+  const [sppMin, sppMax] = sentencesPerParagraph;
 
   if (units === 'words') {
-    const words = Array.from({ length: count }, () => pick(dictionary, rng));
-    return words.join(' ');
+    const out = new Array(count);
+    for (let i = 0; i < count; i++) {
+      out[i] = dict[rng() % dictLen];
+    }
+    return out.join(' ');
   }
 
   const makeSentence = () => {
-    const n = randRange(wordsPerSentence[0], wordsPerSentence[1], rng);
-    const words = Array.from({ length: n }, () => pick(dictionary, rng));
+    const n = randRange(wpsMin, wpsMax, rng);
+    const words = new Array(n);
+    for (let i = 0; i < n; i++) {
+      words[i] = dict[rng() % dictLen];
+    }
     let s = words.join(' ');
-    if (capitalize) s = s.charAt(0).toUpperCase() + s.slice(1);
+    if (capitalize && s.length) s = s.charAt(0).toUpperCase() + s.slice(1);
     if (endWithPeriod) s += '.';
     return s;
   };
 
   if (units === 'sentences') {
-    const sents = Array.from({ length: count }, makeSentence);
+    const sents = new Array(count);
+    for (let i = 0; i < count; i++) {
+      sents[i] = makeSentence();
+    }
     return sents.join(' ');
   }
 
   if (units === 'paragraphs') {
-    const paras = Array.from({ length: count }, () => {
-      const m = randRange(sentencesPerParagraph[0], sentencesPerParagraph[1], rng);
-      const sents = Array.from({ length: m }, makeSentence);
-      return sents.join(' ');
-    });
-    return paras.join(separator === '\n\n' ? '\n\n' : separator);
+    const paras = new Array(count);
+    for (let i = 0; i < count; i++) {
+      const m = randRange(sppMin, sppMax, rng);
+      const sents = new Array(m);
+      for (let j = 0; j < m; j++) {
+        sents[j] = makeSentence();
+      }
+      paras[i] = sents.join(' ');
+    }
+    return paras.join(separator);
   }
 
   throw new Error("units must be 'words', 'sentences', or 'paragraphs'");
 }
 
 // ---- Helpers ----
-
-function pick(arr, rng) {
-  return arr[rng() % arr.length];
-}
 
 function randRange(min, max, rng) {
   if (!Number.isFinite(min) || !Number.isFinite(max) || max < min) {
@@ -69,13 +82,20 @@ function randRange(min, max, rng) {
   return min + (rng() % span);
 }
 
-// Crypto RNG returns uniform 32-bit integers
+// Crypto RNG returns uniform 32-bit integers, buffered for speed
 function cryptoRNG() {
-  if (globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
+  if (typeof globalThis !== 'undefined' &&
+      globalThis.crypto &&
+      typeof globalThis.crypto.getRandomValues === 'function') {
+    const buf = new Uint32Array(128);
+    let idx = buf.length;
+
     return () => {
-      const u32 = new Uint32Array(1);
-      globalThis.crypto.getRandomValues(u32);
-      return u32[0] >>> 0;
+      if (idx >= buf.length) {
+        globalThis.crypto.getRandomValues(buf);
+        idx = 0;
+      }
+      return buf[idx++] >>> 0;
     };
   }
   // fallback: pseudo-random (not crypto-safe)
