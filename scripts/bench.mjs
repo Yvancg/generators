@@ -11,6 +11,7 @@ import { rows }              from '../generate-fake-data/fake.js';
 import { generateHash }      from '../generate-hash/hash.js';
 import { generateLorem }     from '../generate-lorem/lorem.js';
 import { generatePassword }  from '../generate-password/password.js';
+import { generatePhoneNumbers } from '../generate-phone-number/phone.js';
 import { generatePrompt }    from '../generate-prompt/prompt.js';
 import { generateToken }     from '../generate-token/token.js';
 
@@ -34,6 +35,7 @@ const targets = [
   { name: 'hash',      fn: () => generateHash('benchmark', 'sha-256'), iters: 10_000 },
   { name: 'lorem',     fn: () => generateLorem({ units: 'sentences', count: 3 }), iters: 50_000 },
   { name: 'password',  fn: () => generatePassword({ length: 16, symbols: true, numbers: true, uppercase: true, lowercase: true }), iters: 200_000 },
+  { name: 'phone',     fn: () => generatePhoneNumbers({ state: 'CA', count: 10, seed: 'bench' }), iters: 100_000 },
   { name: 'prompt',    fn: () => generatePrompt('text', 'Write a {tone} tweet about {topic}', { tone: 'funny', topic: 'AI startups' }), iters: 100_000 },
   { name: 'token',     fn: () => generateToken({ type: 'hex', length: 32 }), iters: 100_000 },
 ];
