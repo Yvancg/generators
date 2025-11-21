@@ -3,42 +3,45 @@
 [![ssn gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/ssn.js.json)](../metrics/ssn.js.json)
 [![ssn ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/ssn.json)](../bench/ssn.json)
 
-**generate-ssn** creates deterministic or random SVG avatars and placeholders.  
-It supports initials, geometric blocks, and abstract circles — all reproducible via seed.
+**generate-ssn** creates synthetic but structurally valid US Social Security Numbers for testing.  
+It supports formatted or unformatted output, deterministic seeding, and optional SSA validity rules.
 
 
 ---
 
 ## 🚀 Why
 
-Most avatar generators rely on external graphics libraries or canvas APIs.  
-`generate-ssn` is pure ESM and dependency-free, perfect for mock profiles, placeholder images, or synthetic dataset visuals.
+Test datasets often need realistic identifiers without using real personal information.  
+`generate-ssn` is pure ESM and dependency-free, making it a safe way to generate fake SSNs for demos, fixtures, or QA workloads.
 
 ---
 
 ## 🌟 Features
 
-- ✅ Generate avatars by pattern (`initials`, `blocks`, `circles`, or `random`)  
-- ✅ Deterministic output with `seed`  
-- ✅ Adjustable size and background color  
-- ✅ Returns inline SVG string (ready to embed or download)  
-- ✅ Works in Node.js, Deno, Bun, or browser  
+- Generate synthetic US SSNs
+- Optional formatting (123-45-6789)
+- Optional SSA structure validation
+- Deterministic output when seed is provided
+- Works in Node, Bun, Deno, and browser
 
 ---
 
 ## 📦 Usage
 
 ```js
-import { generateAvatar } from './avatar.js';
+import { generateSSN } from './ssn.js';
 
-// Initials avatar
-console.log(generateAvatar({ text: 'YV', pattern: 'initials', size: 128, seed: 'demo' }));
+// Single SSN
+console.log(generateSSN());
 
-// Block pattern avatar
-console.log(generateAvatar({ pattern: 'blocks', size: 128, seed: 'bench' }));
+// Multiple, deterministic
+console.log(generateSSN({ count: 5, seed: 'demo' }));
 
-// Random circle pattern avatar
-console.log(generateAvatar({ pattern: 'circles', size: 256 }));
+// Raw digits only
+console.log(generateSSN({ formatted: false }));
+
+// Strict SSA rules
+console.log(generateSSN({ valid: true }));
 ```
 
 ---
@@ -46,55 +49,54 @@ console.log(generateAvatar({ pattern: 'circles', size: 256 }));
 ## 🧠 API
 
 ```ts
-generateAvatar(options?: AvatarOptions): string
+generateSSN(options?: SSNOptions): string | string[]
 
-type AvatarOptions = {
-  text?: string;                 // initials or label
-  pattern?: 'initials' | 'blocks' | 'circles' | 'random';
-  size?: number;                 // default 128
-  seed?: string | null;          // deterministic seed
-  background?: string | null;    // base color (#hex, rgb, or hsl)
-};
+type SSNOptions = {
+  count?: number;       // default 1
+  seed?: string | null; // deterministic output
+  formatted?: boolean;  // default true → 123-45-6789
+  valid?: boolean;      // enforce basic SSA rules, default true
+}
 ```
-Returns an SVG string that can be directly inserted into the DOM or written to a file.
+
 
 ---
 
 ## Example Output
 
-```html
-<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
-  <rect fill="#3366ff" width="128" height="128"/>
-  <text x="50%" y="55%" fill="#fff" font-size="48" text-anchor="middle" font-family="sans-serif">YV</text>
-</svg>
+```txt
+123-45-6789
+532-20-1184
+009-73-5511
 ```
 
 
 ## 🧪 Browser test
 
-Open `avatar-test.html` in your browser  
-or try the hosted demo 👉🏻 
-[Generate Avatar Test](https://yvancg.github.io/generators/generate-avatar/avatar-test.html)
+Open `ssn-test.html` in your browser  
+or try the hosted demo  
+[Generate SSN Test](https://yvancg.github.io/generators/generate-ssn/ssn-test.html)
 
 ---
 
 ## 🛠 Development
 
-This module is standalone. Copy `avatar.js` into your project.  
+This module is standalone. Copy `san.js` into your project.  
 No `npm install` or build step required.
 
 Run quick test in Node:
 ```bash
-node --input-type=module -e "import('./avatar.js').then(m=>console.log(m.generateAvatar({text:'AI',pattern:'blocks',seed:'demo'})))"
+node --input-type=module -e "import('./ssn.js').then(m=>console.log(m.generateSSN({ count: 3, seed: 'demo' })))"
 ```
 
 ---
 
 ## 🔒 Notes
 
-• Uses crypto.getRandomValues when available for secure randomness.
-• Fully deterministic when seed is provided.
-• Ideal for UI placeholders, mock APIs, and synthetic datasets.
+• Generates only synthetic SSNs  
+• Does not produce real or assignable numbers  
+• Deterministic mode ensures reproducible datasets  
+• Safe for testing, QA, demos, mock users, and fixtures
   
 ---
 
