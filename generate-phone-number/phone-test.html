@@ -24,10 +24,6 @@
   State (optional)
   <select id="state">
     <option value="">Any</option>
-    <option value="CA">CA (California)</option>
-    <option value="NY">NY (New York)</option>
-    <option value="TX">TX (Texas)</option>
-    <option value="FL">FL (Florida)</option>
   </select>
 </label>
 
@@ -38,6 +34,7 @@
     <option value="Los Angeles">Los Angeles</option>
     <option value="San Francisco">San Francisco</option>
     <option value="New York">New York</option>
+    <option value="Chicago">Chicago</option>
     <option value="Houston">Houston</option>
     <option value="Miami">Miami</option>
   </select>
@@ -61,8 +58,19 @@
 <pre id="output">Click "Generate"</pre>
 
 <script type="module">
-  import { generatePhoneNumbers } from './phone.js';
+  import { generatePhoneNumbers, US_AREA_CODES } from './phone.js';
   const $ = id => document.getElementById(id);
+
+  // ---- Populate STATE LIST dynamically from US_AREA_CODES ----
+  const stateSelect = $('state');
+  Object.keys(US_AREA_CODES)
+    .sort()
+    .forEach(st => {
+      const o = document.createElement('option');
+      o.value = st;
+      o.textContent = `${st}`;
+      stateSelect.appendChild(o);
+    });
 
   const out = $('output');
   const copyBtn = $('copy');
