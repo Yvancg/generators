@@ -80,12 +80,7 @@ export const US_AREA_CODES = Object.freeze({
 
 // Simple city-level mappings (extend as needed)
 export const CITY_AREA_CODES = Object.freeze({
-  'Los Angeles': [213, 310, 323, 424, 747, 818],
-  'San Francisco': [415, 628],
-  'New York': [212, 332, 646, 917, 929],
-  'Chicago': [312, 773, 872],
-  'Houston': [281, 346, 713, 832],
-  'Miami': [305, 786]
+  'Los Angeles': [213, 310, 323, 424, 747, 818]
 });
 
 // Flattened list of all area codes for fallback
