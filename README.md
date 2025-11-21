@@ -40,6 +40,10 @@ Available modules:
   [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/password.js.json)](./metrics/password.js.json)
   [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/password.json)](./bench/password.json)
 
+- **generate-phone-number** — US phone number generator with state filtering, city filtering, and bulk generation.  
+  [![phone gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/phone.js.json)](../metrics/phone.js.json)
+[![phone ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/phone.json)](../bench/phone.json)
+
 - **generate-prompt** — Template-based AI prompt generator for text, code, and image models.  
   [![prompt gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/prompt.js.json)](./metrics/prompt.js.json)
   [![prompt ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/prompt.json)](./bench/prompt.json)
@@ -67,6 +71,7 @@ You can try each generator interactively in your browser:
 - [Generate Hash Test](https://yvancg.github.io/generators/generate-hash/hash-test.html)
 - [Generate Lorem Ipsum Test](https://yvancg.github.io/generators/generate-lorem/lorem-test.html)
 - [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
+- [Generate Phone Number Test](https://yvancg.github.io/generators/generate-phone-number/phone-test.html)
 - [Generate Prompt Test](https://yvancg.github.io/generators/generate-prompt/prompt-test.html)
 - [Generate Token Test](https://yvancg.github.io/generators/generate-token/token-test.html)
 
@@ -100,6 +105,7 @@ import { rows, user } from './generate-fake-data/fake.js';
 import { generateHash } from './generate-hash/hash.js';
 import { generateLorem } from './generate-lorem/lorem.js';
 import { generatePassword } from './generate-password/password.js';
+import { generatePhoneNumber } from './generate-phone-number/phone.js';
 import { generatePrompt } from './generate-prompt/prompt.js';
 import { generateToken } from './generate-token/token.js';
 
@@ -129,6 +135,9 @@ console.log(generateLorem({ units: 'sentences', count: 2 }));
 
 console.log(generatePassword({ length: 16, symbols: true }));
 // → 'fP8!cN9^hK2@xQ4?'
+
+console.log(generatePhoneNumber({ state: 'CA', count: 3 }));
+// → ['415-555-1283', '818-555-9022', '323-555-4410']
 
 console.log(generatePrompt('text', 'Write a {tone} tweet about {topic}', { tone: 'funny', topic: 'AI startups' }));
 // → "Write a funny tweet about AI startups"
