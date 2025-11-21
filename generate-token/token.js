@@ -2,6 +2,10 @@
 // Minimal, dependency-free token generator.
 // Supports UUID, hex, base64, and numeric formats with optional deterministic seed.
 
+const HEX_ALPHABET = '0123456789abcdef';
+const BASE64_URL_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+const NUM_ALPHABET = '0123456789';
+
 export function generateToken(options = {}) {
   const {
     type = 'uuid', // 'uuid' | 'hex' | 'base64' | 'numeric'
@@ -9,34 +13,30 @@ export function generateToken(options = {}) {
     seed = null,   // optional deterministic seed
   } = options;
 
-  const rng = seed ? seededRNG(seed) : cryptoRNG();
+  const rng = seed ? seededRNG(String(seed)) : cryptoRNG();
 
-  if (type === 'uuid') {
-    return uuidv4(rng);
+  switch (type) {
+    case 'uuid':
+      return uuidv4(rng);
+    case 'hex':
+      return randomChars(HEX_ALPHABET, length, rng);
+    case 'base64':
+      return randomChars(BASE64_URL_ALPHABET, length, rng);
+    case 'numeric':
+      return randomChars(NUM_ALPHABET, length, rng);
+    default:
+      throw new Error("Invalid token type. Use 'uuid', 'hex', 'base64', or 'numeric'.");
   }
-
-  if (type === 'hex') {
-    return randomChars('0123456789abcdef', length, rng);
-  }
-
-  if (type === 'base64') {
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-    return randomChars(alphabet, length, rng);
-  }
-
-  if (type === 'numeric') {
-    return randomChars('0123456789', length, rng);
-  }
-
-  throw new Error("Invalid token type. Use 'uuid', 'hex', 'base64', or 'numeric'.");
 }
 
 // ---- Helpers ----
 
-function randomChars(charset, len, rng) {
-  const chars = Array.from(charset);
+function randomChars(chars, len, rng) {
+  const n = chars.length;
   let out = '';
-  for (let i = 0; i < len; i++) out += chars[rng() % chars.length];
+  for (let i = 0; i < len; i++) {
+    out += chars[rng() % n];
+  }
   return out;
 }
 
@@ -44,27 +44,46 @@ function randomChars(charset, len, rng) {
 function uuidv4(rng) {
   const bytes = new Uint8Array(16);
   for (let i = 0; i < 16; i++) bytes[i] = rng() & 0xff;
-  bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
-  bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant 10
-  const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
-  return (
-    hex.slice(0, 8) + '-' +
-    hex.slice(8, 12) + '-' +
-    hex.slice(12, 16) + '-' +
-    hex.slice(16, 20) + '-' +
-    hex.slice(20)
-  );
+
+  // version & variant
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  const hex = HEX_ALPHABET;
+  const out = new Array(36);
+  let j = 0;
+
+  for (let i = 0; i < 16; i++) {
+    const b = bytes[i];
+    const hi = b >>> 4;
+    const lo = b & 0x0f;
+    out[j++] = hex[hi];
+    out[j++] = hex[lo];
+
+    // Insert dashes after bytes 4, 6, 8, 10 → positions 8,13,18,23
+    if (i === 3 || i === 5 || i === 7 || i === 9) {
+      out[j++] = '-';
+    }
+  }
+  return out.join('');
 }
 
-// Crypto RNG returns uniform 32-bit integers
+// Crypto RNG returns uniform 32-bit integers with buffering
 function cryptoRNG() {
   if (globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
+    const buf = new Uint32Array(128);
+    let idx = buf.length;
+
     return () => {
-      const u32 = new Uint32Array(1);
-      globalThis.crypto.getRandomValues(u32);
-      return u32[0] >>> 0;
+      if (idx >= buf.length) {
+        globalThis.crypto.getRandomValues(buf);
+        idx = 0;
+      }
+      return buf[idx++] >>> 0;
     };
   }
+
+  // Fallback: not crypto-safe. For completeness only.
   let x = 0x9e3779b9 ^ Date.now();
   return () => {
     x = (x + 0x6d2b79f5) | 0;
