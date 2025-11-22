@@ -12,8 +12,12 @@ export function generateDataset(options = {}) {
     delimiter = ',',
   } = options;
 
-  if (!Number.isInteger(count) || count < 1) throw new Error('count must be >= 1');
-  if (!schema || typeof schema !== 'object') throw new Error('schema must be an object');
+  if (!Number.isInteger(count) || count < 1) {
+    throw new Error('count must be >= 1');
+  }
+  if (!schema || typeof schema !== 'object') {
+    throw new Error('schema must be an object');
+  }
   if (format !== 'jsonl' && format !== 'json' && format !== 'csv') {
     throw new Error("format must be 'jsonl' | 'json' | 'csv'");
   }
@@ -22,29 +26,23 @@ export function generateDataset(options = {}) {
   const fieldNames = Object.keys(schema);
   const fieldCount = fieldNames.length;
   const gens = new Array(fieldCount);
-  
+
   for (let i = 0; i < fieldCount; i++) {
     gens[i] = makeGen(schema[fieldNames[i]], R);
   }
 
-  // Pre-allocate row object template for reuse
-  const rowTemplate = {};
-  for (let i = 0; i < fieldCount; i++) {
-    rowTemplate[fieldNames[i]] = null;
-  }
-
   if (format === 'jsonl') {
-    return generateJSONL(count, fieldCount, fieldNames, gens, rowTemplate);
+    return generateJSONL(count, fieldCount, fieldNames, gens);
   }
 
   if (format === 'json') {
-    return generateJSON(count, fieldCount, fieldNames, gens, rowTemplate);
+    return generateJSON(count, fieldCount, fieldNames, gens);
   }
 
   return generateCSV(count, fieldCount, fieldNames, gens, header, delimiter);
 }
 
-function generateJSONL(count, fieldCount, fieldNames, gens, template) {
+function generateJSONL(count, fieldCount, fieldNames, gens) {
   const lines = new Array(count);
   for (let i = 0; i < count; i++) {
     const row = Object.create(null);
@@ -56,7 +54,7 @@ function generateJSONL(count, fieldCount, fieldNames, gens, template) {
   return lines.join('\n');
 }
 
-function generateJSON(count, fieldCount, fieldNames, gens, template) {
+function generateJSON(count, fieldCount, fieldNames, gens) {
   const rows = new Array(count);
   for (let i = 0; i < count; i++) {
     const row = Object.create(null);
@@ -70,15 +68,15 @@ function generateJSON(count, fieldCount, fieldNames, gens, template) {
 
 function generateCSV(count, fieldCount, fieldNames, gens, header, delimiter) {
   const parts = [];
-  let size = 0;
 
   if (header) {
-    const headerLine = fieldNames.join(delimiter);
+    const headerLine = fieldNames
+      .map(name => csvCell(name, delimiter))
+      .join(delimiter);
     parts.push(headerLine);
-    size = headerLine.length + 1;
   }
 
-  const buffer = new Array(Math.min(count, 1000)); // Batch for better perf
+  const buffer = new Array(Math.min(count, 1000)); // batch rows
   let bufIdx = 0;
 
   for (let i = 0; i < count; i++) {
@@ -89,7 +87,6 @@ function generateCSV(count, fieldCount, fieldNames, gens, header, delimiter) {
       line += (j > 0 ? delimiter : '') + cell;
     }
     buffer[bufIdx++] = line;
-    size += line.length + 1;
 
     if (bufIdx === buffer.length || i === count - 1) {
       parts.push(...buffer.slice(0, bufIdx));
@@ -117,38 +114,47 @@ function defaultSchema() {
 function makeGen(spec, R) {
   if (typeof spec === 'string') spec = { type: spec };
   const t = spec.type;
-  
-  // Cache computed values for specs that don't change
+
   switch (t) {
-    case 'uuid':     return () => uuidv4(R);
-    case 'name':     return () => pick(FIRST_NAMES, R) + ' ' + pick(LAST_NAMES, R);
-    case 'email':    return () => {
-      const fn = slug(pick(FIRST_NAMES, R));
-      const ln = slug(pick(LAST_NAMES, R));
-      const dom = pick(DOMAINS, R);
-      return `${fn}.${ln}@${dom}`;
-    };
-    case 'string':   {
+    case 'uuid':
+      return () => uuidv4(R);
+
+    case 'name':
+      return () => pick(FIRST_NAMES, R) + ' ' + pick(LAST_NAMES, R);
+
+    case 'email':
+      return () => {
+        const fn = slug(pick(FIRST_NAMES, R));
+        const ln = slug(pick(LAST_NAMES, R));
+        const dom = pick(DOMAINS, R);
+        return `${fn}.${ln}@${dom}`;
+      };
+
+    case 'string': {
       const len = spec.len ?? 8;
       return () => randomWords(R, len);
     }
+
     case 'sentence': {
       const min = spec.min ?? 8;
       const max = spec.max ?? 16;
       return () => sentence(R, min, max);
     }
+
     case 'paragraph': {
       const sentences = spec.sentences ?? 3;
       const min = spec.min ?? 8;
       const max = spec.max ?? 16;
       return () => paragraph(R, sentences, min, max);
     }
+
     case 'int': {
       const min = spec.min ?? 0;
       const max = spec.max ?? 100;
       const delta = max - min + 1;
       return () => min + (R() % delta);
     }
+
     case 'float': {
       const min = spec.min ?? 0;
       const max = spec.max ?? 1;
@@ -159,12 +165,16 @@ function makeGen(spec, R) {
         return +v.toFixed(decimals);
       };
     }
-    case 'bool':     return () => (R() & 1) === 1;
+
+    case 'bool':
+      return () => (R() & 1) === 1;
+
     case 'category': {
       const vals = spec.values && spec.values.length ? spec.values : ['a','b','c'];
       const n = vals.length;
       return () => vals[R() % n];
     }
+
     case 'date': {
       const start = toTime(spec.start) ?? Date.now() - 365 * 24 * 3600 * 1000;
       const end   = toTime(spec.end)   ?? Date.now();
@@ -176,6 +186,7 @@ function makeGen(spec, R) {
         return iso ? d.toISOString() : d.toUTCString();
       };
     }
+
     default:
       throw new Error(`unknown field type: ${t}`);
   }
@@ -185,8 +196,7 @@ function makeGen(spec, R) {
 
 function sentence(R, min, max) {
   const n = intIn(R, min, max);
-  const words = [];
-  words.length = n;
+  const words = new Array(n);
   for (let i = 0; i < n; i++) {
     words[i] = pick(LOREM, R);
   }
@@ -196,8 +206,7 @@ function sentence(R, min, max) {
 }
 
 function paragraph(R, sentences, min, max) {
-  const arr = [];
-  arr.length = sentences;
+  const arr = new Array(sentences);
   for (let i = 0; i < sentences; i++) {
     arr[i] = sentence(R, min, max);
   }
@@ -205,9 +214,10 @@ function paragraph(R, sentences, min, max) {
 }
 
 function randomWords(R, len) {
-  const arr = [];
-  arr.length = len;
-  for (let i = 0; i < len; i++) arr[i] = pick(LOREM, R);
+  const arr = new Array(len);
+  for (let i = 0; i < len; i++) {
+    arr[i] = pick(LOREM, R);
+  }
   return arr.join(' ');
 }
 
@@ -229,11 +239,6 @@ function intIn(R, a, b) {
   return a + (R() % (b - a + 1));
 }
 
-function floatIn(R, a, b, d) {
-  const v = a + (R() / 0xffffffff) * (b - a);
-  return +v.toFixed(d);
-}
-
 function toTime(x) {
   if (!x) return null;
   const t = Date.parse(x);
@@ -245,7 +250,11 @@ function toTime(x) {
 function csvCell(v, delim) {
   if (v == null) return '';
   const s = String(v);
-  const needsQuote = s.includes('"') || s.includes('\n') || s.includes('\r') || s.includes(delim);
+  const needsQuote =
+    s.includes('"') ||
+    s.includes('\n') ||
+    s.includes('\r') ||
+    s.includes(delim);
   if (needsQuote) {
     return '"' + s.replace(/"/g, '""') + '"';
   }
@@ -309,6 +318,7 @@ function uuidv4(R) {
 const HEX = '0123456789abcdef';
 
 // ---- tiny dictionaries ----
+
 const FIRST_NAMES = Object.freeze([
   'Ava','Liam','Emma','Noah','Olivia','Elijah','Sophia','Mason','Isabella','Lucas',
   'Mia','Ethan','Amelia','Logan','Harper','James','Evelyn','Benjamin','Abigail'
@@ -319,7 +329,7 @@ const LAST_NAMES  = Object.freeze([
   'Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore'
 ]);
 
-const DOMAINS     = Object.freeze([
+const DOMAINS = Object.freeze([
   'example.com','mail.test','demo.dev','sample.io','local.test'
 ]);
 
