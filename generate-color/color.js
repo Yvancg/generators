@@ -22,7 +22,10 @@ export function generatePalette(options = {}) {
   const rnd = seed ? seededRNG(String(seed)) : cryptoRNG();
   const baseHsl = base ? toHSL(parseColor(base)) : randomHSL(rnd);
 
-  const schemeName = scheme === 'random' ? pick(SCHEMES, rnd) : scheme;
+  const schemeName =
+    scheme === 'random'
+      ? pick(SCHEMES, rnd)
+      : scheme;
 
   let hsls;
   switch (schemeName) {
@@ -46,20 +49,14 @@ export function generatePalette(options = {}) {
   }
 
   const colors = new Array(count);
-  const useHex = format === 'hex';
-  const useRgb = format === 'rgb';
-
   for (let i = 0; i < count; i++) {
     const hsl = hsls[i];
-
-    if (useHex || useRgb) {
-      // Only convert to RGB when needed
-      const rgb = HSLtoRGB(hsl);
-      colors[i] = useHex
-        ? rgbToHex(rgb)
-        : `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+    const rgb = HSLtoRGB(hsl);
+    if (format === 'hex') {
+      colors[i] = rgbToHex(rgb);
+    } else if (format === 'rgb') {
+      colors[i] = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
     } else {
-      // format === 'hsl'
       colors[i] = `hsl(${round(hsl.h)}, ${round(hsl.s)}%, ${round(hsl.l)}%)`;
     }
   }
