@@ -1,15 +1,15 @@
-// generate-dataset/dataset.js
-// Minimal, dependency-free JSON/CSV generator for model fine-tuning.
+// generate-dataset/dataset.js (optimized)
+// High-performance, dependency-free JSON/CSV generator for model fine-tuning.
 // Deterministic via seed. Supports JSON, JSONL, and CSV.
 
 export function generateDataset(options = {}) {
   const {
-    count = 100,              // number of rows
-    schema = defaultSchema(), // { field: spec }
-    format = 'jsonl',         // 'jsonl' | 'json' | 'csv'
-    seed = null,              // deterministic seed
-    header = true,            // CSV header
-    delimiter = ',',          // CSV delimiter
+    count = 100,
+    schema = defaultSchema(),
+    format = 'jsonl',
+    seed = null,
+    header = true,
+    delimiter = ',',
   } = options;
 
   if (!Number.isInteger(count) || count < 1) throw new Error('count must be >= 1');
@@ -19,61 +19,88 @@ export function generateDataset(options = {}) {
   }
 
   const R = seed ? seededRNG(String(seed)) : cryptoRNG();
-
-  // Precompute field names and generator functions
   const fieldNames = Object.keys(schema);
   const fieldCount = fieldNames.length;
   const gens = new Array(fieldCount);
+  
   for (let i = 0; i < fieldCount; i++) {
-    const name = fieldNames[i];
-    gens[i] = makeGen(schema[name], R);
+    gens[i] = makeGen(schema[fieldNames[i]], R);
   }
 
-  // Fast paths per format
+  // Pre-allocate row object template for reuse
+  const rowTemplate = {};
+  for (let i = 0; i < fieldCount; i++) {
+    rowTemplate[fieldNames[i]] = null;
+  }
+
   if (format === 'jsonl') {
-    const lines = new Array(count);
-    for (let i = 0; i < count; i++) {
-      const row = {};
-      for (let j = 0; j < fieldCount; j++) {
-        row[fieldNames[j]] = gens[j](i);
-      }
-      lines[i] = JSON.stringify(row);
-    }
-    return lines.join('\n');
+    return generateJSONL(count, fieldCount, fieldNames, gens, rowTemplate);
   }
 
   if (format === 'json') {
-    const rows = new Array(count);
-    for (let i = 0; i < count; i++) {
-      const row = {};
-      for (let j = 0; j < fieldCount; j++) {
-        row[fieldNames[j]] = gens[j](i);
-      }
-      rows[i] = row;
-    }
-    return JSON.stringify(rows, null, 2);
+    return generateJSON(count, fieldCount, fieldNames, gens, rowTemplate);
   }
 
-  // CSV
-  const csv = [];
-  if (header) {
-    csv.push(csvLine(fieldNames, delimiter));
-  }
-  const lineValues = new Array(fieldCount);
+  return generateCSV(count, fieldCount, fieldNames, gens, header, delimiter);
+}
+
+function generateJSONL(count, fieldCount, fieldNames, gens, template) {
+  const lines = new Array(count);
   for (let i = 0; i < count; i++) {
-    // build row on the fly
+    const row = Object.create(null);
     for (let j = 0; j < fieldCount; j++) {
-      lineValues[j] = csvCell(gens[j](i), delimiter);
+      row[fieldNames[j]] = gens[j](i);
     }
-    csv.push(csvLine(lineValues, delimiter, true));
+    lines[i] = JSON.stringify(row);
   }
-  return csv.join('\n');
+  return lines.join('\n');
+}
+
+function generateJSON(count, fieldCount, fieldNames, gens, template) {
+  const rows = new Array(count);
+  for (let i = 0; i < count; i++) {
+    const row = Object.create(null);
+    for (let j = 0; j < fieldCount; j++) {
+      row[fieldNames[j]] = gens[j](i);
+    }
+    rows[i] = row;
+  }
+  return JSON.stringify(rows, null, 2);
+}
+
+function generateCSV(count, fieldCount, fieldNames, gens, header, delimiter) {
+  const parts = [];
+  let size = 0;
+
+  if (header) {
+    const headerLine = fieldNames.join(delimiter);
+    parts.push(headerLine);
+    size = headerLine.length + 1;
+  }
+
+  const buffer = new Array(Math.min(count, 1000)); // Batch for better perf
+  let bufIdx = 0;
+
+  for (let i = 0; i < count; i++) {
+    let line = '';
+    for (let j = 0; j < fieldCount; j++) {
+      const val = gens[j](i);
+      const cell = csvCell(val, delimiter);
+      line += (j > 0 ? delimiter : '') + cell;
+    }
+    buffer[bufIdx++] = line;
+    size += line.length + 1;
+
+    if (bufIdx === buffer.length || i === count - 1) {
+      parts.push(...buffer.slice(0, bufIdx));
+      bufIdx = 0;
+    }
+  }
+
+  return parts.join('\n');
 }
 
 // ---- schema helpers ----
-// Field spec can be:
-// { type: 'string' | 'sentence' | 'paragraph' | 'name' | 'email' | 'uuid' | 'int' | 'float' | 'bool' | 'category' | 'date' }
-// Additional options depend on type (see makeGen).
 
 function defaultSchema() {
   return {
@@ -90,6 +117,8 @@ function defaultSchema() {
 function makeGen(spec, R) {
   if (typeof spec === 'string') spec = { type: spec };
   const t = spec.type;
+  
+  // Cache computed values for specs that don't change
   switch (t) {
     case 'uuid':     return () => uuidv4(R);
     case 'name':     return () => pick(FIRST_NAMES, R) + ' ' + pick(LAST_NAMES, R);
@@ -99,11 +128,37 @@ function makeGen(spec, R) {
       const dom = pick(DOMAINS, R);
       return `${fn}.${ln}@${dom}`;
     };
-    case 'string':   return () => randomWords(R, spec.len ?? 8);
-    case 'sentence': return () => sentence(R, spec.min ?? 8, spec.max ?? 16);
-    case 'paragraph':return () => paragraph(R, spec.sentences ?? 3, spec.min ?? 8, spec.max ?? 16);
-    case 'int':      return () => intIn(R, spec.min ?? 0, spec.max ?? 100);
-    case 'float':    return () => floatIn(R, spec.min ?? 0, spec.max ?? 1, spec.decimals ?? 2);
+    case 'string':   {
+      const len = spec.len ?? 8;
+      return () => randomWords(R, len);
+    }
+    case 'sentence': {
+      const min = spec.min ?? 8;
+      const max = spec.max ?? 16;
+      return () => sentence(R, min, max);
+    }
+    case 'paragraph': {
+      const sentences = spec.sentences ?? 3;
+      const min = spec.min ?? 8;
+      const max = spec.max ?? 16;
+      return () => paragraph(R, sentences, min, max);
+    }
+    case 'int': {
+      const min = spec.min ?? 0;
+      const max = spec.max ?? 100;
+      const delta = max - min + 1;
+      return () => min + (R() % delta);
+    }
+    case 'float': {
+      const min = spec.min ?? 0;
+      const max = spec.max ?? 1;
+      const decimals = spec.decimals ?? 2;
+      const range = max - min;
+      return () => {
+        const v = min + (R() / 0xffffffff) * range;
+        return +v.toFixed(decimals);
+      };
+    }
     case 'bool':     return () => (R() & 1) === 1;
     case 'category': {
       const vals = spec.values && spec.values.length ? spec.values : ['a','b','c'];
@@ -130,7 +185,8 @@ function makeGen(spec, R) {
 
 function sentence(R, min, max) {
   const n = intIn(R, min, max);
-  const words = new Array(n);
+  const words = [];
+  words.length = n;
   for (let i = 0; i < n; i++) {
     words[i] = pick(LOREM, R);
   }
@@ -140,7 +196,8 @@ function sentence(R, min, max) {
 }
 
 function paragraph(R, sentences, min, max) {
-  const arr = new Array(sentences);
+  const arr = [];
+  arr.length = sentences;
   for (let i = 0; i < sentences; i++) {
     arr[i] = sentence(R, min, max);
   }
@@ -148,20 +205,28 @@ function paragraph(R, sentences, min, max) {
 }
 
 function randomWords(R, len) {
-  const arr = new Array(len);
+  const arr = [];
+  arr.length = len;
   for (let i = 0; i < len; i++) arr[i] = pick(LOREM, R);
   return arr.join(' ');
 }
 
 function slug(s) {
-  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 16) || 'user';
+  const lower = String(s).toLowerCase();
+  let out = '';
+  for (let i = 0; i < lower.length && out.length < 16; i++) {
+    const c = lower.charCodeAt(i);
+    if ((c >= 48 && c <= 57) || (c >= 97 && c <= 122)) {
+      out += lower[i];
+    }
+  }
+  return out || 'user';
 }
 
 // ---- number/date helpers ----
+
 function intIn(R, a, b) {
-  const min = Math.ceil(a);
-  const max = Math.floor(b);
-  return min + (R() % (max - min + 1));
+  return a + (R() % (b - a + 1));
 }
 
 function floatIn(R, a, b, d) {
@@ -176,34 +241,22 @@ function toTime(x) {
 }
 
 // ---- CSV helpers ----
+
 function csvCell(v, delim) {
   if (v == null) return '';
   const s = String(v);
-  if (s.indexOf('"') !== -1 || s.indexOf('\n') !== -1 || s.indexOf('\r') !== -1 || s.indexOf(delim) !== -1) {
+  const needsQuote = s.includes('"') || s.includes('\n') || s.includes('\r') || s.includes(delim);
+  if (needsQuote) {
     return '"' + s.replace(/"/g, '""') + '"';
   }
   return s;
 }
 
-function csvLine(vals, delim, raw = false) {
-  if (raw) return vals.join(delim);
-  const n = vals.length;
-  const out = new Array(n);
-  for (let i = 0; i < n; i++) out[i] = String(vals[i]);
-  return out.join(delim);
-}
-
-function pick(arr, rng) {
-  const len = arr.length;
-  if (!len) throw new Error('pick() requires a non-empty array');
-  return arr[rng() % len];
-}
-
 // ---- RNG + UUID ----
+
 function cryptoRNG() {
   if (globalThis.crypto?.getRandomValues) {
-    // buffer for fewer getRandomValues calls
-    const buf = new Uint32Array(128);
+    const buf = new Uint32Array(256); // Larger buffer
     let idx = buf.length;
     return () => {
       if (idx >= buf.length) {
@@ -213,7 +266,6 @@ function cryptoRNG() {
       return buf[idx++] >>> 0;
     };
   }
-  // fallback (not crypto-safe)
   let x = 0x9e3779b9 ^ Date.now();
   return () => {
     x = (x + 0x6d2b79f5) | 0;
@@ -241,22 +293,17 @@ function seededRNG(seed) {
 function uuidv4(R) {
   const b = new Uint8Array(16);
   for (let i = 0; i < 16; i++) b[i] = R() & 0xff;
-  b[6] = (b[6] & 0x0f) | 0x40; // v4
+  b[6] = (b[6] & 0x0f) | 0x40;
   b[8] = (b[8] & 0x3f) | 0x80;
-  const hexArr = new Array(32);
+  const hexArr = new Array(36);
+  let idx = 0;
   for (let i = 0; i < 16; i++) {
     const v = b[i];
-    hexArr[i * 2]     = HEX[v >>> 4];
-    hexArr[i * 2 + 1] = HEX[v & 0x0f];
+    if (i === 4 || i === 6 || i === 8 || i === 10) hexArr[idx++] = '-';
+    hexArr[idx++] = HEX[v >>> 4];
+    hexArr[idx++] = HEX[v & 0x0f];
   }
-  const hex = hexArr.join('');
-  return (
-    hex.slice(0, 8) + '-' +
-    hex.slice(8, 12) + '-' +
-    hex.slice(12, 16) + '-' +
-    hex.slice(16, 20) + '-' +
-    hex.slice(20)
-  );
+  return hexArr.join('');
 }
 
 const HEX = '0123456789abcdef';
