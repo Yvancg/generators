@@ -317,6 +317,10 @@ function uuidv4(R) {
 
 const HEX = '0123456789abcdef';
 
+function pick(arr, R) {
+  return arr[R() % arr.length];
+}
+
 // ---- tiny dictionaries ----
 
 const FIRST_NAMES = Object.freeze([
