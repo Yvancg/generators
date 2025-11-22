@@ -21,7 +21,7 @@
 
 <body>
 
-<h2>SSN Generator Test</h2>
+<h1>SSN Generator Test</h1>
 <p>Generate synthetic, structurally valid US SSNs for demos and fixtures.</p>
 
 <div class="row">
@@ -64,7 +64,7 @@ $('generate').onclick = () => {
 
   try {
     const list = generateSSN({ count, seed, formatted, valid });
-    const text = Array.isArray(list) ? list.join('\\n') : list;
+    const text = Array.isArray(list) ? list.join('\n') : list;
 
     out.textContent = text;
     copy.disabled = false;
