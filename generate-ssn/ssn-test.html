@@ -6,29 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      margin: 20px;
-      max-width: 700px;
-    }
-    label { display: block; margin-top: 12px; font-size: 14px; }
-    input[type="number"], input[type="text"] {
-      width: 120px;
-      padding: 4px 6px;
-      font-size: 14px;
-    }
-    .row { margin-top: 10px; }
-    button {
-      padding: 6px 12px;
-      margin-right: 8px;
-    }
-    pre {
-      margin-top: 16px;
-      padding: 10px;
-      background: #f4f4f4;
-      border: 1px solid #ddd;
-      white-space: pre-wrap;
-    }
+    body{font-family:ui-monospace,monospace;background:#fafafa;color:#222;max-width:800px;margin:40px auto;padding:20px}
+    h1{font-size:1.4rem;margin-bottom:1rem}
+    label{display:block;margin-top:10px}
+    select,input[type="number"],input[type="text"]{padding:4px}
+    .row{display:flex;gap:10px;align-items:center;margin-top:20px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .hint{color:#666;font-size:.9rem}
+    button{padding:8px 16px;cursor:pointer;font-family:inherit}
+    pre{background:#eee;padding:12px;border-radius:6px;white-space:pre-wrap;word-break:break-word;margin-top:16px;min-height:120px}
+    .small{font-size:.9rem}
   </style>
 </head>
 
