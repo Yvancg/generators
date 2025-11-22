@@ -36,7 +36,7 @@ Available modules:
 [![lorem gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/lorem.js.json)](../metrics/lorem.js.json)
 [![lorem ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/lorem.json)](../bench/lorem.json)
 
-- **generate-password** — Credit card validator with Luhn check and brand detection (Visa, Mastercard, Amex, etc.).  
+- **generate-password** — Credit card validator with Luhn check and brand detection (Visa, Mastercard, Amex, etc.).
   [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/metrics/password.js.json)](./metrics/password.js.json)
   [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/validators/main/bench/password.json)](./bench/password.json)
 
