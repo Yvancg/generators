@@ -23,8 +23,8 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "brand": { "type": "string", "enum": ["visa", "mastercard", "amex", "discover", "random"] },
-          "seed": { "type": "integer" }
+          "brand": { "type": "string", "enum": ["visa", "mastercard", "amex", "discover"] },
+          "seed": { "type": ["string", "null"], "description": "Test-only deterministic seed" }
         },
         "required": []
       },
@@ -86,7 +86,7 @@
         "properties": {
           "kind": { "type": "string", "enum": ["user", "company", "address", "rows"] },
           "count": { "type": "integer", "minimum": 1 },
-          "seed": { "type": "integer" }
+          "seed": { "type": ["string", "null"] }
         },
         "required": ["kind"]
       },
@@ -99,7 +99,7 @@
         "type": "object",
         "properties": {
           "text": { "type": "string" },
-          "algo": { "type": "string", "enum": ["sha-256", "sha-1", "md5"] }
+          "algo": { "type": "string", "enum": ["sha-256", "md5"] }
         },
         "required": ["text", "algo"]
       },
@@ -113,7 +113,7 @@
         "properties": {
           "units": { "type": "string", "enum": ["words", "sentences", "paragraphs"] },
           "count": { "type": "integer", "minimum": 1 },
-          "seed": { "type": "integer" }
+          "seed": { "type": ["string", "null"] }
         },
         "required": ["units", "count"]
       },
@@ -125,9 +125,9 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "length": { "type": "integer", "minimum": 4, "default": 16 },
+          "length": { "type": "integer", "minimum": 1, "maximum": 4096, "default": 16 },
           "symbols": { "type": "boolean", "default": true },
-          "seed": { "type": "integer" }
+          "seed": { "type": ["string", "null"], "description": "Test-only deterministic seed" }
         },
         "required": []
       },
@@ -204,9 +204,9 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "enum": ["hex", "base64", "uuid4"] },
-          "length": { "type": "integer", "minimum": 8 },
-          "seed": { "type": "integer" }
+          "type": { "type": "string", "enum": ["uuid", "hex", "base64", "numeric"] },
+          "length": { "type": "integer", "minimum": 1, "maximum": 4096 },
+          "seed": { "type": ["string", "null"], "description": "Test-only deterministic seed" }
         },
         "required": ["type"]
       },

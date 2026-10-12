@@ -6,12 +6,6 @@ on:
       - 'generate-*/**/*.js'
       - 'scripts/bench.mjs'
       - '.github/workflows/bench.yml'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'generate-*/**/*.js'
-      - 'scripts/bench.mjs'
-      - '.github/workflows/bench.yml'
   workflow_dispatch:
 
 permissions:

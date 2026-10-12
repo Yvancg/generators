@@ -58,6 +58,8 @@ MD5      → 5eb63bbbe01eeed093cb22bb8f5acdc3
 ```
 
 
+Supports SHA-256 via native Web Crypto and MD5 through a small legacy implementation. MD5 is insecure for passwords and other security-sensitive purposes; use an appropriate password-hashing algorithm for credentials.
+
 ## 🧪 Browser test
 
 Open `hash-test.html` in your browser  
