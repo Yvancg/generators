@@ -7,15 +7,51 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "text": { "type": "string", "description": "Initials or label to render." },
-          "pattern": { "type": "string", "enum": ["initials", "blocks", "circles", "random"], "default": "initials" },
-          "size": { "type": "integer", "minimum": 32, "maximum": 512, "default": 128 },
-          "seed": { "type": ["string", "null"], "description": "Optional deterministic seed." },
-          "background": { "type": "string", "description": "Base color override (#hex, rgb, hsl)." }
+          "text": {
+            "type": "string",
+            "description": "Initials or label to render."
+          },
+          "pattern": {
+            "type": "string",
+            "enum": [
+              "initials",
+              "blocks",
+              "circles",
+              "random"
+            ],
+            "default": "initials"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 32,
+            "maximum": 512,
+            "default": 128
+          },
+          "seed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional deterministic seed."
+          },
+          "background": {
+            "type": "string",
+            "description": "Base color override (#hex, rgb, hsl)."
+          }
         },
         "required": []
       },
-      "rule": { "type": "builtin", "name": "avatar", "fields": ["text", "pattern", "size", "seed", "background"] }
+      "rule": {
+        "type": "builtin",
+        "name": "avatar",
+        "fields": [
+          "text",
+          "pattern",
+          "size",
+          "seed",
+          "background"
+        ]
+      }
     },
     {
       "name": "generate-card-number",
@@ -23,12 +59,33 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "brand": { "type": "string", "enum": ["visa", "mastercard", "amex", "discover", "random"] },
-          "seed": { "type": "integer" }
+          "brand": {
+            "type": "string",
+            "enum": [
+              "visa",
+              "mastercard",
+              "amex",
+              "discover"
+            ]
+          },
+          "seed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reproducible test seed; not suitable for secrets"
+          }
         },
         "required": []
       },
-      "rule": { "type": "builtin", "name": "genCard", "fields": ["brand", "seed"] }
+      "rule": {
+        "type": "builtin",
+        "name": "genCard",
+        "fields": [
+          "brand",
+          "seed"
+        ]
+      }
     },
     {
       "name": "generate-color",
@@ -36,15 +93,58 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "base": { "type": "string", "description": "Base color (#hex, rgb(), or hsl())." },
-          "scheme": { "type": "string", "enum": ["triadic", "complementary", "tetradic", "analogous", "monochrome", "random"], "default": "triadic" },
-          "count": { "type": "integer", "minimum": 1, "maximum": 12, "default": 5 },
-          "format": { "type": "string", "enum": ["hex", "rgb", "hsl"], "default": "hex" },
-          "seed": { "type": ["string", "null"], "description": "Optional deterministic seed." }
+          "base": {
+            "type": "string",
+            "description": "Base color (#hex, rgb(), or hsl())."
+          },
+          "scheme": {
+            "type": "string",
+            "enum": [
+              "triadic",
+              "complementary",
+              "tetradic",
+              "analogous",
+              "monochrome",
+              "random"
+            ],
+            "default": "triadic"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "default": 5
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "hex",
+              "rgb",
+              "hsl"
+            ],
+            "default": "hex"
+          },
+          "seed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional deterministic seed."
+          }
         },
         "required": []
       },
-      "rule": { "type": "builtin", "name": "color", "fields": ["base", "scheme", "count", "format", "seed"] }
+      "rule": {
+        "type": "builtin",
+        "name": "color",
+        "fields": [
+          "base",
+          "scheme",
+          "count",
+          "format",
+          "seed"
+        ]
+      }
     },
     {
       "name": "generate-dataset",
@@ -52,31 +152,91 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "count": { "type": "integer", "minimum": 1, "default": 10 },
-          "format": { "type": "string", "enum": ["json", "jsonl", "csv"], "default": "jsonl" },
-          "seed": { "type": ["string", "null"], "description": "Optional deterministic seed." },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 10
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "json",
+              "jsonl",
+              "csv"
+            ],
+            "default": "jsonl"
+          },
+          "seed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional deterministic seed."
+          },
           "schema": {
             "type": "object",
             "description": "Custom schema defining each field type.",
             "additionalProperties": {
               "type": "object",
               "properties": {
-                "type": { "type": "string", "enum": ["uuid", "name", "email", "sentence", "paragraph", "int", "float", "bool", "category", "date"] },
-                "min": { "type": "number" },
-                "max": { "type": "number" },
-                "decimals": { "type": "integer" },
-                "values": { "type": "array", "items": { "type": "string" } },
-                "start": { "type": "string" },
-                "end": { "type": "string" },
-                "iso": { "type": "boolean" }
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "uuid",
+                    "name",
+                    "email",
+                    "sentence",
+                    "paragraph",
+                    "int",
+                    "float",
+                    "bool",
+                    "category",
+                    "date"
+                  ]
+                },
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                },
+                "decimals": {
+                  "type": "integer"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                },
+                "iso": {
+                  "type": "boolean"
+                }
               },
-              "required": ["type"]
+              "required": [
+                "type"
+              ]
             }
           }
         },
         "required": []
       },
-      "rule": { "type": "builtin", "name": "dataset", "fields": ["count", "format", "seed", "schema"] }
+      "rule": {
+        "type": "builtin",
+        "name": "dataset",
+        "fields": [
+          "count",
+          "format",
+          "seed",
+          "schema"
+        ]
+      }
     },
     {
       "name": "generate-fake-data",
@@ -84,13 +244,39 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "kind": { "type": "string", "enum": ["user", "company", "address", "rows"] },
-          "count": { "type": "integer", "minimum": 1 },
-          "seed": { "type": "integer" }
+          "kind": {
+            "type": "string",
+            "enum": [
+              "user",
+              "company",
+              "address",
+              "rows"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "seed": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
-        "required": ["kind"]
+        "required": [
+          "kind"
+        ]
       },
-      "rule": { "type": "builtin", "name": "fakeData", "fields": ["kind", "count", "seed"] }
+      "rule": {
+        "type": "builtin",
+        "name": "fakeData",
+        "fields": [
+          "kind",
+          "count",
+          "seed"
+        ]
+      }
     },
     {
       "name": "generate-hash",
@@ -98,12 +284,30 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "text": { "type": "string" },
-          "algo": { "type": "string", "enum": ["sha-256", "sha-1", "md5"] }
+          "text": {
+            "type": "string"
+          },
+          "algo": {
+            "type": "string",
+            "enum": [
+              "sha-256",
+              "md5"
+            ]
+          }
         },
-        "required": ["text", "algo"]
+        "required": [
+          "text",
+          "algo"
+        ]
       },
-      "rule": { "type": "builtin", "name": "hash", "fields": ["text", "algo"] }
+      "rule": {
+        "type": "builtin",
+        "name": "hash",
+        "fields": [
+          "text",
+          "algo"
+        ]
+      }
     },
     {
       "name": "generate-lorem",
@@ -111,13 +315,39 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "units": { "type": "string", "enum": ["words", "sentences", "paragraphs"] },
-          "count": { "type": "integer", "minimum": 1 },
-          "seed": { "type": "integer" }
+          "units": {
+            "type": "string",
+            "enum": [
+              "words",
+              "sentences",
+              "paragraphs"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "seed": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
-        "required": ["units", "count"]
+        "required": [
+          "units",
+          "count"
+        ]
       },
-      "rule": { "type": "builtin", "name": "lorem", "fields": ["units", "count", "seed"] }
+      "rule": {
+        "type": "builtin",
+        "name": "lorem",
+        "fields": [
+          "units",
+          "count",
+          "seed"
+        ]
+      }
     },
     {
       "name": "generate-password",
@@ -125,13 +355,35 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "length": { "type": "integer", "minimum": 4, "default": 16 },
-          "symbols": { "type": "boolean", "default": true },
-          "seed": { "type": "integer" }
+          "length": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4096,
+            "default": 16
+          },
+          "symbols": {
+            "type": "boolean",
+            "default": true
+          },
+          "seed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "For repeatable test values only; not secure"
+          }
         },
         "required": []
       },
-      "rule": { "type": "builtin", "name": "password", "fields": ["length", "symbols", "seed"] }
+      "rule": {
+        "type": "builtin",
+        "name": "password",
+        "fields": [
+          "length",
+          "symbols",
+          "seed"
+        ]
+      }
     },
     {
       "name": "generate-phone-number",
@@ -140,13 +392,32 @@
         "type": "object",
         "properties": {
           "state": {
-            "type": ["string", "null"],
-            "enum": ["CA", "NY", "TX", "FL", null],
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "CA",
+              "NY",
+              "TX",
+              "FL",
+              null
+            ],
             "description": "Optional US state code. If provided, restricts area codes to that state."
           },
           "city": {
-            "type": ["string", "null"],
-            "enum": ["Los Angeles", "San Francisco", "New York", "Houston", "Miami", null],
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "Los Angeles",
+              "San Francisco",
+              "New York",
+              "Houston",
+              "Miami",
+              null
+            ],
             "description": "Optional city name. If provided and known, overrides state-based selection."
           },
           "count": {
@@ -156,7 +427,10 @@
             "description": "Number of phone numbers to generate."
           },
           "seed": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Optional deterministic seed for reproducible output."
           }
         },
@@ -165,7 +439,12 @@
       "rule": {
         "type": "builtin",
         "name": "phoneNumber",
-        "fields": ["state", "city", "count", "seed"]
+        "fields": [
+          "state",
+          "city",
+          "count",
+          "seed"
+        ]
       }
     },
     {
@@ -174,14 +453,42 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "enum": ["text", "code", "image"], "default": "text" },
-          "template": { "type": "string", "description": "Prompt string with placeholders" },
-          "vars": { "type": "object", "description": "Variable map for placeholders" },
-          "seed": { "type": "string", "description": "Optional deterministic seed" }
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "code",
+              "image"
+            ],
+            "default": "text"
+          },
+          "template": {
+            "type": "string",
+            "description": "Prompt string with placeholders"
+          },
+          "vars": {
+            "type": "object",
+            "description": "Variable map for placeholders"
+          },
+          "seed": {
+            "type": "string",
+            "description": "Optional deterministic seed"
+          }
         },
-        "required": ["template"]
+        "required": [
+          "template"
+        ]
       },
-      "rule": { "type": "builtin", "name": "prompt", "fields": ["type", "template", "vars", "seed"] }
+      "rule": {
+        "type": "builtin",
+        "name": "prompt",
+        "fields": [
+          "type",
+          "template",
+          "vars",
+          "seed"
+        ]
+      }
     },
     {
       "name": "generate-ssn",
@@ -189,14 +496,35 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "count":     { "type": "integer", "minimum": 1, "default": 1 },
-          "formatted": { "type": "boolean", "default": true },
-          "valid":     { "type": "boolean", "default": true },
-          "seed":      { "type": "string" }
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "formatted": {
+            "type": "boolean",
+            "default": true
+          },
+          "valid": {
+            "type": "boolean",
+            "default": true
+          },
+          "seed": {
+            "type": "string"
+          }
         },
         "required": []
       },
-      "rule": { "type": "builtin", "name": "ssn", "fields": ["count", "formatted", "valid", "seed"] }
+      "rule": {
+        "type": "builtin",
+        "name": "ssn",
+        "fields": [
+          "count",
+          "formatted",
+          "valid",
+          "seed"
+        ]
+      }
     },
     {
       "name": "generate-token",
@@ -204,13 +532,41 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "enum": ["hex", "base64", "uuid4"] },
-          "length": { "type": "integer", "minimum": 8 },
-          "seed": { "type": "integer" }
+          "type": {
+            "type": "string",
+            "enum": [
+              "uuid",
+              "hex",
+              "base64",
+              "numeric"
+            ]
+          },
+          "length": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4096
+          },
+          "seed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Deterministic test token only"
+          }
         },
-        "required": ["type"]
+        "required": [
+          "type"
+        ]
       },
-      "rule": { "type": "builtin", "name": "token", "fields": ["type", "length", "seed"] }
+      "rule": {
+        "type": "builtin",
+        "name": "token",
+        "fields": [
+          "type",
+          "length",
+          "seed"
+        ]
+      }
     }
   ]
 }
