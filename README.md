@@ -48,6 +48,8 @@ Available modules:
   [![prompt gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/prompt.js.json)](./metrics/prompt.js.json)
   [![prompt ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/prompt.json)](./bench/prompt.json)
 
+- **generate-slug** — Unicode-aware title-to-slug helper with optional length limit. [Module](./generate-slug/)  
+
 - **generate-ssn** — Synthetic US Social Security number generator for fixtures and test data only.  
   [![ssn gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/ssn.js.json)](./metrics/ssn.js.json)
   [![ssn ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/ssn.json)](./bench/ssn.json)
@@ -77,6 +79,7 @@ You can try each generator interactively in your browser:
 - [Generate Password Test](https://yvancg.github.io/generators/generate-password/password-test.html)
 - [Generate Phone Number Test](https://yvancg.github.io/generators/generate-phone-number/phone-test.html)
 - [Generate Prompt Test](https://yvancg.github.io/generators/generate-prompt/prompt-test.html)
+- [Generate Slug Test](https://yvancg.github.io/generators/generate-slug/slug-test.html)
 - [Generate SSN Test](https://yvancg.github.io/generators/generate-ssn/ssn-test.html)
 - [Generate Token Test](https://yvancg.github.io/generators/generate-token/token-test.html)
 
@@ -95,6 +98,7 @@ node --experimental-default-type=module --test tests/*.test.mjs
 - `generatePassword()` and `generateToken()` **require `crypto.getRandomValues` without a seed** and throw when secure randomness is unavailable. Run only in environments with Web Crypto.
 - `seed` produces **predictable test data**. Never use seeded passwords or tokens as real credentials or secrets.
 - Password and token lengths must be integers from 1 to 4096 (UUID ignores `length`); disable-all-charsets is invalid for passwords.
+- `generateSlug()` converts titles to Unicode-preserving slugs; it does not guarantee uniqueness or ASCII-only URLs.
 - `generateHash()` supports `sha-256` and `md5`. MD5 is legacy and unsuitable for password storage or security-sensitive integrity.
 - `generatePalette()` rejects out-of-range RGB/HSL values. Fake contact details and card numbers are for tests only.
 
@@ -112,6 +116,7 @@ import { generatePassword } from './generate-password/password.js';
 import { generateToken } from './generate-token/token.js';
 import { generatePalette } from './generate-color/color.js';
 import { generateHash } from './generate-hash/hash.js';
+import { generateSlug } from './generate-slug/slug.js';
 import { generatePhoneNumbers } from './generate-phone-number/phone.js';
 import { generateCard } from './generate-card-number/card.js';
 import { rows, rng } from './generate-fake-data/fake.js';
@@ -121,6 +126,7 @@ console.log(generateToken({ type: 'hex', length: 32 })); // secure random token
 console.log(generateToken({ type: 'uuid', seed: 'test' })); // predictable fixture only
 console.log(generatePalette({ base: '#3366ff', count: 3 }).colors);
 console.log(await generateHash('hello', 'sha-256'));
+console.log(generateSlug('Café déjà vu!'));          // 'cafe-deja-vu'
 console.log(generatePhoneNumbers({ state: 'CA', count: 2, seed: 'test' }));
 console.log(generateCard({ brand: 'visa', seed: 'test' })); // simulated test card
 console.log(rows(2, 'test'));
@@ -148,6 +154,7 @@ generators/
   ├─ generate-password/
   ├─ generate-phone-number/
   ├─ generate-prompt/
+  ├─ generate-slug/
   ├─ generate-ssn/
   └─ generate-token/
 ```
