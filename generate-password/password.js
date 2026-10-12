@@ -1,6 +1,6 @@
 // generate-password/password.js
 // Minimal, dependency-free password generator.
-// Uses crypto-safe randomness and supports deterministic seeding.
+// Requires WebCrypto for secure passwords; seed is for non-secure test fixtures only.
 
 // Static charsets so they are not rebuilt on every call
 const SET_LOWER  = 'abcdefghijklmnopqrstuvwxyz';
@@ -13,22 +13,21 @@ let _cryptoBuf = null;
 let _cryptoIdx = 0;
 
 function cryptoIndex(max) {
-  if (!globalThis.crypto || typeof globalThis.crypto.getRandomValues !== 'function') {
-    // fallback PRNG (not crypto-safe)
-    let x = 0x9e3779b9 ^ Date.now();
-    x = (x + 0x6d2b79f5) | 0;
-    x ^= x >>> 15;
-    x = Math.imul(x, 1 | x);
-    x ^= x >>> 7;
-    return (x ^ (x >>> 14)) >>> 0 % max;
+  if (!globalThis.crypto?.getRandomValues) {
+    throw new Error('Secure randomness unavailable: crypto.getRandomValues required');
   }
-
-  if (!_cryptoBuf || _cryptoIdx >= _cryptoBuf.length) {
-    _cryptoBuf = new Uint32Array(128);
-    globalThis.crypto.getRandomValues(_cryptoBuf);
-    _cryptoIdx = 0;
-  }
-  return _cryptoBuf[_cryptoIdx++] % max;
+  // Avoid modulo bias by rejecting the small overflow range.
+  const limit = Math.floor(0x100000000 / max) * max;
+  let n;
+  do {
+    if (!_cryptoBuf || _cryptoIdx >= _cryptoBuf.length) {
+      _cryptoBuf = new Uint32Array(128);
+      globalThis.crypto.getRandomValues(_cryptoBuf);
+      _cryptoIdx = 0;
+    }
+    n = _cryptoBuf[_cryptoIdx++];
+  } while (n >= limit);
+  return n % max;
 }
 
 export function generatePassword(options = {}) {
@@ -41,6 +40,9 @@ export function generatePassword(options = {}) {
     seed = null,
   } = options;
 
+  if (!Number.isInteger(length) || length < 1 || length > 4096) {
+    throw new Error('length must be an integer between 1 and 4096');
+  }
   let charset = '';
   if (lowercase) charset += SET_LOWER;
   if (uppercase) charset += SET_UPPER;
