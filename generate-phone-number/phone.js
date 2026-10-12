@@ -21,7 +21,7 @@ export const US_AREA_CODES = Object.freeze({
   CT: [203, 475, 860, 959],
   DE: [302],
   FL: [
-    239, 305, 321, 352, 386, 407, 448, 561, 627, 650, 689, 727, 754, 772, 786,
+    239, 305, 321, 352, 386, 407, 448, 561, 689, 727, 754, 772, 786,
     813, 850, 863, 904, 941, 954
   ],
   GA: [229, 404, 470, 478, 678, 706, 762, 770, 912],
@@ -120,8 +120,9 @@ export function generatePhoneNumbers(options = {}) {
   const out = [];
   for (let i = 0; i < count; i++) {
     const area = pick(pool, rng);
-    const mid  = String((rng() % 900) + 100);   // 100–999
-    const last = String((rng() % 9000) + 1000); // 1000–9999
+    // NANP 555-0100 through 555-0199 is reserved for fictional use.
+    const mid = '555';
+    const last = String((rng() % 100) + 100).padStart(4, '0');
     out.push(formatUS(area, mid, last));
   }
   return out;
@@ -130,10 +131,16 @@ export function generatePhoneNumbers(options = {}) {
 // ---------------- helpers ----------------
 
 function resolveAreaPool(state, city) {
-  if (city && CITY_AREA_CODES[city]) {
-    return CITY_AREA_CODES[city];
+  if (city != null) {
+    const codes = CITY_AREA_CODES[city];
+    if (!codes) throw new Error('unsupported city');
+    if (state != null && (!US_AREA_CODES[state] || !codes.some(c => US_AREA_CODES[state].includes(c)))) {
+      throw new Error('city does not match state');
+    }
+    return codes;
   }
-  if (state && US_AREA_CODES[state]) {
+  if (state != null) {
+    if (!US_AREA_CODES[state]) throw new Error('unsupported state');
     return US_AREA_CODES[state];
   }
   return ALL_US_AREA_CODES;
