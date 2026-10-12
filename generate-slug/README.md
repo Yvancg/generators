@@ -13,7 +13,7 @@ generateSlug('你好 世界'); // '你好-世界'
 generateSlug('Hello World', { maxLength: 6 }); // 'hello'
 ~~~
 
-Normalizes Unicode with NFKD, removes combining marks, lowercases, and joins runs of punctuation/whitespace with hyphens. Retains letters and numbers from non-Latin scripts instead of discarding them.
+Normalizes Unicode with NFKD, removes Latin accent marks, preserves other scripts' combining marks, lowercases, and joins runs of punctuation/whitespace with hyphens. Retains non-Latin letters and combining marks instead of discarding them.
 
 maxLength is an optional positive integer limiting Unicode code points (not bytes); a trailing hyphen is removed after truncation. Returns an empty string if no letters/numbers remain. Throws on non-string input or invalid maxLength.
 

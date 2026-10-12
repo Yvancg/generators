@@ -9,9 +9,10 @@ export function generateSlug(text, { maxLength = null } = {}) {
   }
 
   let slug = text.normalize('NFKD')
-    .replace(/\p{M}/gu, '')
+    // Fold Latin accents, but keep marks essential to other scripts.
+    .replace(/(\p{Script=Latin})\p{M}+/gu, '$1')
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, '-')
+    .replace(/[^\p{L}\p{N}\p{M}]+/gu, '-')
     .replace(/^-+|-+$/g, '');
 
   if (maxLength !== null) slug = Array.from(slug).slice(0, maxLength).join('').replace(/-+$/g, '');
