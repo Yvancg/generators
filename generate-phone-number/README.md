@@ -79,6 +79,8 @@ Returns an array of formatted US phone numbers.
 
 ---
 
+Generated phone numbers use the reserved fictional 555-0100 through 555-0199 block. Unknown states and cities now raise errors instead of silently ignoring filters. The city map currently supports Los Angeles only; state-only and unfiltered generation remain available. Area-code assignments may evolve, so do not use this utility for live phone-number verification.
+
 ## 🧪 Browser test
 
 Open `phone-test.html` in your browser  
