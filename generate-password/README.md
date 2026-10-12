@@ -3,7 +3,7 @@
 [![password gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/password.js.json)](../metrics/password.js.json)
 [![password ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/password.json)](../bench/password.json)
 
-**generate-password** creates random, strong passwords suitable for authentication, testing, or demo accounts.  
+**generate-password** creates random passwords using Web Crypto when no seed is provided.  
 It supports length, charset control, and reproducible outputs when a seed is provided.
 
 ---
@@ -11,14 +11,14 @@ It supports length, charset control, and reproducible outputs when a seed is pro
 ## 🚀 Why
 
 Most password generators depend on heavy libraries, weak pseudo-randomness, or unsafe string operations.  
-`generate-password` is a small, auditable, and crypto-safe module that runs everywhere with zero dependencies.
+`generate-password` is a small, auditable, and crypto-safe module that has zero dependencies and requires Web Crypto for real passwords.
 
 ---
 
 ## 🌟 Features
 
 - ✅ Uses `crypto.getRandomValues()` for secure entropy  
-- ✅ Optional deterministic seeding for reproducible outputs  
+- ✅ Optional deterministic seeding for **test fixtures only**  
 - ✅ Customizable character sets (symbols, numbers, uppercase, lowercase)  
 - ✅ Works in Node.js, Deno, Bun, and browsers  
 - ✅ Zero dependencies — pure ES module  
@@ -46,7 +46,7 @@ generatePassword({ length: 12, seed: 'demo-seed' });
 
 | Option     | Type          | Default | Description                     |
 |-------------|---------------|----------|---------------------------------|
-| `length`   | number        | 16       | Password length                 |
+| `length`   | integer       | 16       | 1–4096 characters                |
 | `symbols`  | boolean       | true     | Include special characters      |
 | `numbers`  | boolean       | true     | Include digits                  |
 | `uppercase`| boolean       | true     | Include A–Z                     |
@@ -70,9 +70,11 @@ type GenerateOptions = {
   seed?: string | null;
 };
 ```
-Returns a string containing the generated password.
+Returns a string containing the generated password. All character sets cannot be disabled at once. Without a seed, throws if `crypto.getRandomValues()` is unavailable.
 
 ---
+
+**Security:** A provided `seed` uses a predictable pseudorandom generator. Never use seeded output as a real password. For unseeded output, secure randomness is mandatory; there is no insecure fallback.
 
 ## 🧪 Browser test
 
