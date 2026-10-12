@@ -63,6 +63,8 @@ type PaletteOptions = {
 
 ---
 
+Input RGB components must be 0–255, while HSL saturation/lightness must be 0–100%. Out-of-range channels throw an error instead of producing an invalid color.
+
 ## Example Output
 
 ```bash
