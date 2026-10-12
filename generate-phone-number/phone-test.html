@@ -52,7 +52,7 @@
 <pre id="output">Click "Generate"</pre>
 
 <script type="module">
-  import { generatePhoneNumbers, US_AREA_CODES } from './phone.js';
+  import { generatePhoneNumbers, US_AREA_CODES, CITY_AREA_CODES } from './phone.js';
   const $ = id => document.getElementById(id);
 
   // ---- Populate STATE LIST dynamically from US_AREA_CODES ----
@@ -65,6 +65,13 @@
       o.textContent = `${st}`;
       stateSelect.appendChild(o);
     });
+
+  Object.keys(CITY_AREA_CODES).sort().forEach(city => {
+    const option = document.createElement('option');
+    option.value = city;
+    option.textContent = city;
+    $('city').appendChild(option);
+  });
 
   const out = $('output');
   const copyBtn = $('copy');
