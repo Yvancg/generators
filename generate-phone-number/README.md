@@ -27,29 +27,17 @@ Most phone number generators rely on external datasets or inconsistent formattin
 
 ---
 
-## 📦 Usage
+## Usage
 
-```js
+~~~js
 import { generatePhoneNumbers } from './phone.js';
 
-// Generate a single random US phone number
-console.log(generatePhoneNumbers());
-// → ["(415) 392-8127"]
+// Every result is in a reserved fictional 555-01xx range.
+console.log(generatePhoneNumbers({ state: 'CA', count: 3, seed: 'demo' }));
+console.log(generatePhoneNumbers({ state: 'CA', city: 'Los Angeles', count: 2 }));
 
-// Generate 5 phone numbers from California
-console.log(generatePhoneNumbers({ state: "CA", count: 5 }));
-// → ["(213) 555-4821", "(415) 290-1833", ...]
-
-// Deterministic list with seed
-console.log(generatePhoneNumbers({ count: 3, seed: "demo" }));
-// → ["(646) 201-4922", "(305) 440-9821", "(512) 933-4408"]
-
-// Target a specific city (if known)
-console.log(generatePhoneNumbers({ city: "San Francisco", count: 2 }));
-// → ["(415) 328-9012", "(628) 440-5511"]
-```
-
----
+// Unknown state/city filters throw, rather than falling back silently.
+~~~
 
 ## Options
 
