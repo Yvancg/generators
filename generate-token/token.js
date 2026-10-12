@@ -1,5 +1,5 @@
 // generate-token/token.js
-// Minimal, dependency-free token generator.
+// Minimal, dependency-free token generator (WebCrypto required for secrets).
 // Supports UUID, hex, base64, and numeric formats with optional deterministic seed.
 
 const HEX_ALPHABET = '0123456789abcdef';
@@ -13,7 +13,11 @@ export function generateToken(options = {}) {
     seed = null,   // optional deterministic seed
   } = options;
 
-  const rng = seed ? seededRNG(String(seed)) : cryptoRNG();
+  if (type !== 'uuid' && (!Number.isInteger(length) || length < 1 || length > 4096)) {
+    throw new Error('length must be an integer between 1 and 4096');
+  }
+  // Seeded tokens are reproducible test fixtures, never secrets.
+  const rng = seed != null ? seededRNG(String(seed)) : cryptoRNG();
 
   switch (type) {
     case 'uuid':
@@ -70,27 +74,17 @@ function uuidv4(rng) {
 
 // Crypto RNG returns uniform 32-bit integers with buffering
 function cryptoRNG() {
-  if (globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
-    const buf = new Uint32Array(128);
-    let idx = buf.length;
-
-    return () => {
-      if (idx >= buf.length) {
-        globalThis.crypto.getRandomValues(buf);
-        idx = 0;
-      }
-      return buf[idx++] >>> 0;
-    };
+  if (!globalThis.crypto?.getRandomValues) {
+    throw new Error('Secure randomness unavailable: crypto.getRandomValues required');
   }
-
-  // Fallback: not crypto-safe. For completeness only.
-  let x = 0x9e3779b9 ^ Date.now();
+  const buf = new Uint32Array(128);
+  let idx = buf.length;
   return () => {
-    x = (x + 0x6d2b79f5) | 0;
-    x ^= x >>> 15;
-    x = Math.imul(x, 1 | x);
-    x ^= x >>> 7;
-    return (x ^ (x >>> 14)) >>> 0;
+    if (idx >= buf.length) {
+      globalThis.crypto.getRandomValues(buf);
+      idx = 0;
+    }
+    return buf[idx++] >>> 0;
   };
 }
 
