@@ -3,14 +3,14 @@
 [![token gzip](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/metrics/token.js.json)](../metrics/token.js.json)
 [![token ops/s](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yvancg/generators/main/bench/token.json)](../bench/token.json)
 
-**generate-token** cryptographically generates random token or API key (hex, base64, UUID).
+**generate-token** creates random tokens and UUIDs using Web Crypto unless a test seed is provided.
 
 ---
 
 ## 🚀 Why
 
 Many token generators depend on heavy libraries or unsafe randomness.  
-`generate-token` is minimal, deterministic (if seeded), and dependency-free — perfect for reproducible tests, mock APIs, and secure token generation.
+`generate-token` is minimal and dependency-free. Unseeded results are suitable for secret generation when Web Crypto is available; seeded results are predictable test fixtures.
 
 ---
 
@@ -18,7 +18,7 @@ Many token generators depend on heavy libraries or unsafe randomness.
 
 - ✅ Cryptographically secure randomness (`crypto.getRandomValues`)  
 - ✅ Supports `uuid`, `hex`, `base64`, and `numeric` formats  
-- ✅ Deterministic output via `seed` for reproducible results  
+- ✅ Deterministic output via `seed` for **testing only**  
 - ✅ Works in Node.js, Deno, Bun, and browsers  
 - ✅ No dependencies — pure ESM  
 
@@ -63,7 +63,7 @@ type TokenOptions = {
   seed?: string | null;
 };
 ```
-Returns a token string in the specified format.
+Returns a string in the specified format. `length` is an integer from 1 to 4096 for `hex`, `base64`, and `numeric`; it is ignored for `uuid`. Without a seed, throws if `crypto.getRandomValues()` is unavailable.
 
 ---
 
@@ -73,10 +73,12 @@ Returns a token string in the specified format.
 {
   "uuid": "f33a9a3e-dc2b-4b3b-a29e-8adad58a4770",
   "hex": "8e97ab4c291d5a7fbe21004da05a7f1b",
-  "base64": "X1pjUWFkR2x4R2E=",
+  "base64": "X1pjUWFkR2x4R2E_",
   "numeric": "5829034710"
 }
 ```
+
+The `base64` format is a random **base64url alphabet string** (A–Z, a–z, 0–9, `-`, `_`), not a padded encoding of random bytes. A `seed` is never safe for credentials or authentication tokens.
 
 ## 🧪 Browser test
 
