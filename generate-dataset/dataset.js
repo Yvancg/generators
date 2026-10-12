@@ -178,10 +178,12 @@ function makeGen(spec, R) {
     case 'date': {
       const start = toTime(spec.start) ?? Date.now() - 365 * 24 * 3600 * 1000;
       const end   = toTime(spec.end)   ?? Date.now();
-      const span  = Math.max(1, end - start);
-      const iso   = spec.iso !== false;
+      if (end <= start) throw new Error('date end must be after start');
+      const span = end - start;
+      const iso = spec.iso !== false;
       return () => {
-        const t = start + (R() % span);
+        // 32-bit modulo only spans ~49.7 days of milliseconds.
+        const t = start + Math.floor((R() / 0x100000000) * span);
         const d = new Date(t);
         return iso ? d.toISOString() : d.toUTCString();
       };
