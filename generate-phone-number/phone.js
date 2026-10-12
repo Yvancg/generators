@@ -1,11 +1,11 @@
 // generate-phone-number/phone.js
 // Deterministic US phone number generator with state/city filters.
-// Returns US-format numbers like "(415) 392-8127" in an array of strings.
+// Returns fictitious US-format numbers like "(415) 555-0107" in an array of strings.
 //
 // Example:
-//   generatePhoneNumbers(); // ["(415) 392-8127"]
+//   generatePhoneNumbers(); // ["(415) 555-0107"]
 //   generatePhoneNumbers({ state: "CA", count: 5 });
-//   generatePhoneNumbers({ city: "New York", count: 3, seed: "demo" });
+//   generatePhoneNumbers({ city: "Los Angeles", state: "CA", count: 3, seed: "demo" });
 
 export const US_AREA_CODES = Object.freeze({
   AL: [205, 251, 256, 334, 938],
@@ -100,7 +100,7 @@ export const ALL_US_AREA_CODES = Object.freeze(
  * @param {string|null} [options.city]   City name, e.g. "San Francisco"
  * @param {number} [options.count=1]     How many numbers to generate
  * @param {string|null} [options.seed]   Deterministic seed
- * @returns {string[]} Array of formatted numbers, e.g. ["(415) 392-8127"]
+ * @returns {string[]} Array of fictional numbers, e.g. ["(415) 555-0107"]
  */
 export function generatePhoneNumbers(options = {}) {
   const {
