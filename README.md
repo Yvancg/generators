@@ -61,7 +61,7 @@ All helpers are designed for use in:
 - Node.js / Deno / Bun (import)
 - Edge runtimes (Cloudflare Workers, Vercel Edge, etc.)
 
-Each module has its own `README.md`, tests, and can be imported individually.
+Modules can be imported independently. Browser demos and a dependency-free Node regression suite are included.
 
 ## 🔗 Live Demos (GitHub Pages)
 
@@ -82,14 +82,21 @@ You can try each generator interactively in your browser:
 
 Each page loads its respective module and allows interactive validation.
 
-## Install
+## Use
+Import individual ESM modules directly; no build step or dependency installation is required.
 
-`npm i @yvancg/generators`  # or per-module packages when published
+To run the regression tests with Node.js 22+:
 
-## API Guarantees
+~~~bash
+node --experimental-default-type=module --test tests/*.test.mjs
+~~~
 
-- No eval or dynamic code.
-- Regexes fuzz-tested for catastrophic backtracking.
+## Security and compatibility
+- `generatePassword()` and `generateToken()` **require `crypto.getRandomValues` without a seed** and throw when secure randomness is unavailable. Run only in environments with Web Crypto.
+- `seed` produces **predictable test data**. Never use seeded passwords or tokens as real credentials or secrets.
+- Password and token lengths must be integers from 1 to 4096 (UUID ignores `length`); disable-all-charsets is invalid for passwords.
+- `generateHash()` supports `sha-256` and `md5`. MD5 is legacy and unsuitable for password storage or security-sensitive integrity.
+- `generatePalette()` rejects out-of-range RGB/HSL values. Fake contact details and card numbers are for tests only.
 
 ## Design Principles
 
@@ -99,61 +106,25 @@ Each page loads its respective module and allows interactive validation.
 4. **Predictable output**: Always valid and formatted.
 5. **Composable**: Each generator is a pure function.
 
-## Example Usage
-
-```js
-import { generateAvatar } from './generate-avatar/avatar.js';
-import { generateCard } from './card.js';
-import { generatePalette } from './generate-color/color.js';
-import { generateDataset } from './generate-dataset/dataset.js';
-import { rows, user } from './generate-fake-data/fake.js';
-import { generateHash } from './generate-hash/hash.js';
-import { generateLorem } from './generate-lorem/lorem.js';
+## Example usage
+~~~js
 import { generatePassword } from './generate-password/password.js';
-import { generatePhoneNumber } from './generate-phone-number/phone.js';
-import { generatePrompt } from './generate-prompt/prompt.js';
-import { generateSSN } from './generate-ssn/ssn.js';
 import { generateToken } from './generate-token/token.js';
+import { generatePalette } from './generate-color/color.js';
+import { generateHash } from './generate-hash/hash.js';
+import { generatePhoneNumbers } from './generate-phone-number/phone.js';
+import { generateCard } from './generate-card-number/card.js';
+import { rows, rng } from './generate-fake-data/fake.js';
 
-console.log(generateAvatar({ text: 'AI', size: 128, seed: 'demo' }));
-// → '<svg width="128" height="128" ...>…</svg>'
-
-console.log(generateCard({ brand: 'visa' }));
-// → { number: '4111111111111111', brand: 'visa', expiry: '08/28', cvc: '123' }
-
-console.log(generatePalette({ base: '#3366ff', scheme: 'triadic', count: 5 }));
-// → { base: '#3366ff', scheme: 'triadic', colors: ['#3366ff','#ff33cc','#33ff66'], textOnBase: '#ffffff' }
-
-console.log(generateDataset({ count: 3, format: 'jsonl', seed: 'demo' }));
-// → '{"id":"...","text":"Lorem ipsum ..."}'
-
-console.log(rows(3, 42));
-// → array of 3 fake user objects (deterministic)
-
-console.log(user());
-// → { id: "u_123456", name: "Ava Johnson", ... }
-
-console.log(await generateHash('hello world', 'sha-256'));
-// → 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9'
-
-console.log(generateLorem({ units: 'sentences', count: 2 }));
-// → 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-
-console.log(generatePassword({ length: 16, symbols: true }));
-// → 'fP8!cN9^hK2@xQ4?'
-
-console.log(generatePhoneNumber({ state: 'CA', count: 3 }));
-// → ['415-555-1283', '818-555-9022', '323-555-4410']
-
-console.log(generatePrompt('text', 'Write a {tone} tweet about {topic}', { tone: 'funny', topic: 'AI startups' }));
-// → "Write a funny tweet about AI startups"
-
-console.log(generateSSN({ count: 3, seed: 'demo' }));
-// → ['123-45-6789', '...', '...']
-
-console.log(generateToken({ type: 'hex', length: 32 }));
-// → 'b1f94e1d28a2ef3e3a6f0b8e7e9cc041'
-```
+console.log(generatePassword({ length: 20 }));          // secure random password
+console.log(generateToken({ type: 'hex', length: 32 })); // secure random token
+console.log(generateToken({ type: 'uuid', seed: 'test' })); // predictable fixture only
+console.log(generatePalette({ base: '#3366ff', count: 3 }).colors);
+console.log(await generateHash('hello', 'sha-256'));
+console.log(generatePhoneNumbers({ state: 'CA', count: 2, seed: 'test' }));
+console.log(generateCard({ brand: 'visa', seed: 'test' })); // simulated test card
+console.log(rows(2, 'test'));
+~~~
 
 ## Folder Structure
 
@@ -183,17 +154,17 @@ generators/
 
 ## Security Notes
 
-- Uses `crypto.getRandomValues` or `crypto.randomBytes` for entropy.
+- Credential generators require Web Crypto for unseeded randomness.
 - No external network requests.
-- All JSON/YAML outputs sanitized.
+- Deterministic seeds and simulated identifiers are for test fixtures, not production credentials.
 
 ## Contributing
 
-Pull requests for additional safe validators (e.g., IBAN, domain names, etc.) are welcome. Please maintain the following rules:
+Pull requests for small, standalone generators are welcome. Please maintain the following rules:
 
 - Pure ESM or TypeScript modules
 - No external dependencies
-- 100% test coverage
+- Regression tests for changed behavior
 - Keep logic under 150 lines per module
 
 ## License
