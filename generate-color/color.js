@@ -178,20 +178,18 @@ function parseColor(s) {
 
   const mRgb = RGB_RE.exec(str);
   if (mRgb) {
-    return {
-      r: +mRgb[1],
-      g: +mRgb[2],
-      b: +mRgb[3]
-    };
+    const values = mRgb.slice(1).map(Number);
+    if (values.some(v => v > 255)) throw new Error('RGB channels must be 0–255');
+    return { r: values[0], g: values[1], b: values[2] };
   }
 
   const mHsl = HSL_RE.exec(str);
   if (mHsl) {
-    return HSLtoRGB({
-      h: +mHsl[1],
-      s: +mHsl[2],
-      l: +mHsl[3]
-    });
+    const [h, saturation, lightness] = mHsl.slice(1).map(Number);
+    if (h > 360 || saturation > 100 || lightness > 100) {
+      throw new Error('HSL channels out of range');
+    }
+    return HSLtoRGB({ h, s: saturation, l: lightness });
   }
 
   throw new Error('unsupported color format');
