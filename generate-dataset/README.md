@@ -83,6 +83,8 @@ type FieldSpec = {
 ```
 
 
+Date generation samples the full UTC interval from `start` (inclusive) to `end` (exclusive); `end` must be after `start`. Generated records are simulated test data, not real identities.
+
 ## 🧪 Browser test
 
 Open `dataset-test.html` in your browser  
