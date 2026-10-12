@@ -98,7 +98,7 @@ node --input-type=module -e "import('./password.js').then(m=>console.log(m.gener
 
 ## 🔒 Notes
 
-•	Uses crypto.getRandomValues() or crypto.randomBytes() for randomness.
+•	Uses `crypto.getRandomValues()` for unseeded passwords and throws if unavailable.
 •	Deterministic seed mode is for testing only.
 •	No external dependencies or network calls.
   
