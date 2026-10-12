@@ -92,6 +92,8 @@ To run the regression tests with Node.js 22+:
 
 ~~~bash
 node --experimental-default-type=module --test tests/*.test.mjs
+
+Metric badge workflows are manually dispatched, avoiding routine commits. Regression tests run automatically on PRs and pushes.
 ~~~
 
 ## Security and compatibility
