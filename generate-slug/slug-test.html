@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Slug generator</title>
+<h1>Slug generator</h1>
+<label>Title <input id="value" value="Café déjà vu!"></label>
+<button id="create">Generate</button><output id="result"></output>
+<script type="module">
+import { generateSlug } from './slug.js';
+const create = () => document.querySelector('#result').textContent =
+  generateSlug(document.querySelector('#value').value);
+document.querySelector('#create').addEventListener('click', create);
+create();
+</script>
