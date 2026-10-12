@@ -184,6 +184,19 @@
       "rule": { "type": "builtin", "name": "prompt", "fields": ["type", "template", "vars", "seed"] }
     },
     {
+      "name": "generate-slug",
+      "description": "Generate a Unicode-aware, URL-path-friendly slug from a title.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "description": "Title to slugify" },
+          "maxLength": { "type": "integer", "minimum": 1, "description": "Optional maximum number of Unicode code points" }
+        },
+        "required": ["text"]
+      },
+      "rule": { "type": "builtin", "name": "slug", "fields": ["text", "maxLength"] }
+    },
+    {
       "name": "generate-ssn",
       "description": "Generate synthetic US Social Security numbers for testing.",
       "input_schema": {
